@@ -6,8 +6,7 @@ type: Index
 position: Consumer
 access: 3rd-Party
 image: https://kinlane-productions.s3.amazonaws.com/apis-json/apis-json-logo.jpg
-tags:
-  - API
+tags: []
 created: '2025-02-12'
 modified: '2025-02-12'
 url: >-
@@ -19,8 +18,7 @@ apis:
     description: >-
       Do you want to build standardisedapps that run on any blockchain?
     humanURL: ' https://quant.network/developers/'
-    tags:
-      - API
+    tags: []
     properties:
       - type: Documentation
         url: ' https://quant.network/developers/'
