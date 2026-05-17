@@ -43,11 +43,11 @@ apis:
         url: https://docs.overledger.dev/
       - type: API Documentation
         url: https://docs.overledger.dev/reference/how-to-access-overledger-apis
-      - type: Getting Started
+      - type: GettingStarted
         url: https://docs.overledger.dev/docs/getting-started
       - type: Authentication
         url: https://docs.overledger.dev/reference/getaccesstoken
-      - type: Changelog
+      - type: ChangeLog
         url: https://docs.overledger.dev/changelog
       - type: SDK
         url: https://github.com/quantnetwork/overledger-sdk-javascript-v2
@@ -56,7 +56,7 @@ common:
     url: https://www.quant.network/
   - type: Developer Portal
     url: https://docs.overledger.dev/
-  - type: GitHub Organization
+  - type: GitHubOrganization
     url: https://github.com/quantnetwork
 maintainers:
   - FN: Kin Lane
