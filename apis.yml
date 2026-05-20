@@ -52,6 +52,8 @@ apis:
       - type: SDK
         url: https://github.com/quantnetwork/overledger-sdk-javascript-v2
 common:
+  - type: LinkedIn
+    url: https://www.linkedin.com/company/quantnetwork
   - type: Website
     url: https://www.quant.network/
   - type: Developer Portal
