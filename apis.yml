@@ -49,14 +49,14 @@ apis:
         url: https://docs.overledger.dev/reference/getaccesstoken
       - type: ChangeLog
         url: https://docs.overledger.dev/changelog
-      - type: SDK
+      - type: SDKs
         url: https://github.com/quantnetwork/overledger-sdk-javascript-v2
 common:
   - type: LinkedIn
     url: https://www.linkedin.com/company/quantnetwork
   - type: Website
     url: https://www.quant.network/
-  - type: Developer Portal
+  - type: DeveloperPortal
     url: https://docs.overledger.dev/
   - type: GitHubOrganization
     url: https://github.com/quantnetwork
