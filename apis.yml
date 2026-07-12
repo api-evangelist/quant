@@ -52,6 +52,8 @@ apis:
       - type: SDKs
         url: https://github.com/quantnetwork/overledger-sdk-javascript-v2
 common:
+  - type: DomainSecurity
+    url: security/quant-domain-security.yml
   - type: LinkedIn
     url: https://www.linkedin.com/company/quantnetwork
   - type: Website
@@ -60,6 +62,8 @@ common:
     url: https://docs.overledger.dev/
   - type: GitHubOrganization
     url: https://github.com/quantnetwork
+  - url: https://quant.network/feed/
+    type: Blog
 maintainers:
   - FN: Kin Lane
     email: kin@apievangelist.com
