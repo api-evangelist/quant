@@ -49,6 +49,12 @@ apis:
       - Interoperability
       - Smart Contracts
       - Digital Assets
+      - Webhook
+    tags_raw:
+      - Blockchain
+      - Interoperability
+      - Smart Contracts
+      - Digital Assets
       - Webhooks
     properties:
       - type: Documentation
