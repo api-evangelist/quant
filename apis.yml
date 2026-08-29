@@ -6,6 +6,17 @@ description: >-
   contracts, transactions, and accounts across multiple distributed ledger
   technologies without requiring blockchain expertise.
 type: Index
+deliveryModel:
+  model: library
+  open_source: false
+  commercial: false
+  callable_host: false
+  label: Library · distributed through package registries, no callable service
+  confidence: low
+  source:
+  - none
+  generated: '2026-08-28'
+  method: derived
 accessModel:
   pricing: freemium
   onboarding: unknown
