@@ -1,0 +1,123 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/quant/main/json-schema/quant-flow-app-detail-schema.json",
+  "title": "FlowAppDetail",
+  "x-generated": "2026-10-14",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/quant-overledger-server-openapi.yml#/components/schemas/FlowAppDetail",
+  "type": "object",
+  "required": [
+    "appId",
+    "displayName",
+    "description",
+    "publisher",
+    "visibility",
+    "categories",
+    "versions",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "appId": {
+      "type": "string"
+    },
+    "displayName": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "publisher": {
+      "type": "string"
+    },
+    "visibility": {
+      "$ref": "#/$defs/AppVisibility"
+    },
+    "categories": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "versions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "version",
+          "status",
+          "appType",
+          "createdAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "version": {
+            "type": "string"
+          },
+          "status": {
+            "$ref": "#/$defs/VersionStatus"
+          },
+          "appType": {
+            "$ref": "#/$defs/AppType"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "_links": {
+      "$ref": "#/$defs/HypermediaLinks"
+    }
+  },
+  "$defs": {
+    "AppType": {
+      "type": "string",
+      "enum": [
+        "internal",
+        "external"
+      ]
+    },
+    "AppVisibility": {
+      "type": "string",
+      "enum": [
+        "public",
+        "permissioned",
+        "private"
+      ]
+    },
+    "HypermediaLinks": {
+      "type": "object",
+      "properties": {
+        "self": {
+          "type": "string"
+        },
+        "submit": {
+          "type": "string"
+        }
+      }
+    },
+    "VersionStatus": {
+      "type": "string",
+      "enum": [
+        "active",
+        "deprecated",
+        "retired"
+      ]
+    }
+  }
+}

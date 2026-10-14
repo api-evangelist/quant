@@ -1,0 +1,94 @@
+generated: '2026-10-14'
+method: derived
+generator: derive-problem-types.py
+source:
+- openapi/quant-overledger-server-openapi.yml
+format: rfc9457
+envelope:
+  media_type: application/json
+  schema: StandardError
+coverage:
+  operations: 70
+  statuses_declared: 11
+problems:
+- status: 400
+  title: Bad Request
+  description: Bad request
+  operations: 26
+  media_types:
+  - application/json
+  - application/problem+json
+  schema: StandardError
+- status: 401
+  title: Unauthorized
+  description: Unauthorized — missing or invalid credentials
+  operations: 67
+  media_types:
+  - application/json
+  - application/problem+json
+  schema: StandardError
+- status: 402
+  title: Payment Required
+  description: Payment required (x402)
+  operations: 1
+  media_types:
+  - application/json
+  schema: X402Descriptor
+- status: 403
+  title: Forbidden
+  description: Invalid credentials (JSON-RPC error code `-32001`)
+  operations: 1
+  media_types:
+  - application/json
+  schema: JsonRpcError
+- status: 404
+  title: Not Found
+  description: Resource not found
+  operations: 29
+  media_types:
+  - application/json
+  - application/problem+json
+  schema: StandardError
+- status: 409
+  title: Conflict
+  description: Resource conflict
+  operations: 2
+  media_types:
+  - application/json
+  - application/problem+json
+  schema: StandardError
+- status: 410
+  title: Gone
+  description: Session expired or already complete (RFC 7807)
+  operations: 3
+  media_types:
+  - application/problem+json
+  schema: ProblemDetails
+- status: 422
+  title: Unprocessable Content
+  description: Unprocessable — incompatible SDK version
+  operations: 1
+  media_types:
+  - application/problem+json
+  schema: ProblemDetails
+- status: 429
+  title: Too Many Requests
+  description: Rate limit exceeded (RFC 7807)
+  operations: 3
+  media_types:
+  - application/problem+json
+  schema: ProblemDetails
+- status: 502
+  title: Bad Gateway
+  description: Flow App error, payment settlement failure, or content filter violation (RFC 7807)
+  operations: 2
+  media_types:
+  - application/problem+json
+  schema: ProblemDetails
+- status: 503
+  title: Service Unavailable
+  description: Service unavailable (MongoDB disconnected)
+  operations: 2
+  media_types:
+  - application/json
+  schema: JsonRpcError

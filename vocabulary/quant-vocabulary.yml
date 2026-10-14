@@ -1,0 +1,423 @@
+generated: '2026-10-14'
+method: derived
+generator: derive-vocabulary.py
+source: openapi/quant-overledger-server-openapi.yml
+vocabulary:
+  name: Quant Network Domain Vocabulary
+  description: 'Terms declared by Quant Network''s own API contract: its resource groups, objects and enumerations, with the contract''s definitions.
+    Derived, not authored.'
+  version: '2026-10-14'
+  terms:
+  - term: Health
+    definition: Liveness and readiness probes
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: Observability
+    definition: Prometheus metrics
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: RPC
+    definition: JSON-RPC proxy to the Fusion L2 (OP-Geth) **only**. For JSON-RPC against any other connected chain, use the Fusion Proxy's multi-DLT
+      endpoint `/dlts/{dlt}/networks/{networkId}/rpc/{apiKey}` (see the fusion-proxy spec).
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: User
+    definition: Authenticated user profile and resource data
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: Deposits
+    definition: Token deposit management
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: Contracts
+    definition: Deployed smart contract registry and permissions
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: Stakes
+    definition: Staking operations
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: Nodes
+    definition: DLT node management
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: Networks
+    definition: Network discovery
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: Flow Sessions
+    definition: Multi-step Flow App session management
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: Flow Registry
+    definition: Available Flow App definitions
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: Flow Query
+    definition: Read-only state queries against Flow Apps
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: Flow Webhooks
+    definition: Outbound webhook subscriptions and event replay
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: Swaps
+    definition: Token swap quotes and execution
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: Withdrawals
+    definition: L2-to-L1 withdrawal lifecycle (initiate, prove, finalize)
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: API Keys
+    definition: Self-service management of Overledger-issued API keys
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: Tracker Address
+    definition: Subscribe to events emitted from / to an address
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: Tracker Event
+    definition: Subscribe to a specific contract event signature
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: Tracker Transaction
+    definition: Track a transaction's confirmation status with callback notifications
+    tags:
+    - Resource Group
+    source: openapi/quant-overledger-server-openapi.yml
+  - term: JsonRpcRequest
+    definition: 'Object declared by the contract with fields: jsonrpc, method, id, params.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/JsonRpcRequest
+  - term: JsonRpcResponse
+    definition: 'Object declared by the contract with fields: jsonrpc, id, result.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/JsonRpcResponse
+  - term: JsonRpcError
+    definition: 'Object declared by the contract with fields: jsonrpc, id, error.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/JsonRpcError
+  - term: StandardError
+    definition: 'Object declared by the contract with fields: timestamp, status, error, message, path.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/StandardError
+  - term: ContractVisibility
+    definition: 'Enumeration declared by the contract with values: PUBLIC, PERMISSIONED, PRIVATE.'
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/ContractVisibility
+  - term: DeployedContract
+    definition: 'Object declared by the contract with fields: deployerId, address, name, type, visibility, whitelistedContractIds, createdAt,
+      updatedAt.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/DeployedContract
+  - term: PaginatedMeta
+    definition: 'Object declared by the contract with fields: total, page, pageSize, hasMore.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/PaginatedMeta
+  - term: DltType
+    definition: 'Enumeration declared by the contract with values: EVM, HEDERA, SOLANA, SUI, APTOS, COSMOS.'
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/DltType
+  - term: Node
+    definition: 'Object declared by the contract with fields: _id, userId, address, network, name, dlt, networkId, createdAt, updatedAt.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/Node
+  - term: Provider
+    definition: 'Object declared by the contract with fields: _id, userId, name, url, resetPolicy, status, createdAt, updatedAt.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/Provider
+  - term: Stake
+    definition: 'Object declared by the contract with fields: txHash, network, status, amount, createdAt, updatedAt.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/Stake
+  - term: OffsetPagination
+    definition: 'Object declared by the contract with fields: page, pageSize, total.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/OffsetPagination
+  - term: Swap
+    definition: 'Object declared by the contract with fields: id, userId, tokenIn, tokenOut, amountIn, amountOutEstimated, amountOutMin, amountOutActual,
+      slippageBps, routeTokens, encodedPath, walletAddress. (5 more)'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/Swap
+  - term: L1Network
+    definition: 'Enumeration declared by the contract with values: ETH_MAINNET, SEPOLIA, OPTIMISM, OPTIMISM_SEPOLIA, ARBITRUM_ONE, ARBITRUM_SEPOLIA.'
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/L1Network
+  - term: TokenSymbol
+    definition: Supported bridge tokens (non-exhaustive)
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/TokenSymbol
+  - term: Deposit
+    definition: 'Object declared by the contract with fields: id, fromNetwork, token, amount, fromAddress, toAddress, txHash, approvalTxHash,
+      status, createdAt, updatedAt.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/Deposit
+  - term: CreateDepositRequest
+    definition: 'Object declared by the contract with fields: fromNetwork, token, amount, fromAddress, toAddress, txHash, approvalTxHash.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/CreateDepositRequest
+  - term: ContractPermission
+    definition: 'Object declared by the contract with fields: userId, contractAddress, alias, description, createdAt, updatedAt.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/ContractPermission
+  - term: AddNodeRequest
+    definition: 'Object declared by the contract with fields: address, network, name, dlt.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/AddNodeRequest
+  - term: Network
+    definition: 'Object declared by the contract with fields: _id, networkId, name, type, environment, visibility, status, capacity, isFusion,
+      rpc, createdAt, updatedAt.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/Network
+  - term: ProblemDetails
+    definition: RFC 7807 Problem Details — used by all /flow/* endpoints
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/ProblemDetails
+  - term: SessionStatus
+    definition: 'Enumeration declared by the contract with values: active, complete, expired.'
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/SessionStatus
+  - term: TemplateType
+    definition: 'Enumeration declared by the contract with values: form, review, info, document.'
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/TemplateType
+  - term: FieldType
+    definition: 'Enumeration declared by the contract with values: text-input, text-area, number, currency, select, checkbox, date, radio-group,
+      display, table, wallet.'
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/FieldType
+  - term: ActionType
+    definition: 'Enumeration declared by the contract with values: submit.'
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/ActionType
+  - term: ActionStyle
+    definition: 'Enumeration declared by the contract with values: primary, secondary, danger.'
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/ActionStyle
+  - term: DisplayFormat
+    definition: 'Enumeration declared by the contract with values: text, currency, date, percentage.'
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/DisplayFormat
+  - term: RiskLevel
+    definition: 'Enumeration declared by the contract with values: safe, caution, irreversible.'
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/RiskLevel
+  - term: ScreenSpec
+    definition: 'Object declared by the contract with fields: template, title, description, icon.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/ScreenSpec
+  - term: SelectOption
+    definition: 'Object declared by the contract with fields: value, label.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/SelectOption
+  - term: TableColumn
+    definition: 'Object declared by the contract with fields: key, label, format.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/TableColumn
+  - term: WalletConfig
+    definition: 'Object declared by the contract with fields: action, chains, message, transaction.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/WalletConfig
+  - term: StepField
+    definition: 'Field schema is polymorphic on `type`. Not all properties apply to every type: - text-input / text-area: placeholder, required,
+      minLength, maxLength, pattern, rows (text-area only) - number / currency: required, min, max, step, currencyCode (currency only) - select
+      / radio-group: required, options, dataRef, submitResolve, limit - checkbox: required, defaultChecked - date: required, min (ISO date s'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/StepField
+  - term: StepAction
+    definition: 'Object declared by the contract with fields: id, type, label, style, disabled, confirmationMessage.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/StepAction
+  - term: StepMessage
+    definition: 'Object declared by the contract with fields: text, type.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/StepMessage
+  - term: BusinessValidationError
+    definition: 'Object declared by the contract with fields: fieldId, code, message.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/BusinessValidationError
+  - term: AgentMeta
+    definition: 'Object declared by the contract with fields: hint, emits, riskLevel, outputQuery, idempotent.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/AgentMeta
+  - term: StepPayment
+    definition: 'Object declared by the contract with fields: amountAtomicUnits, currency, chain, recipient, description, actions, tokenAddress.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/StepPayment
+  - term: X402SettlementReceipt
+    definition: 'Object declared by the contract with fields: txHash, chainId, blockNumber, settledAt.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/X402SettlementReceipt
+  - term: StepSpec
+    definition: 'Object declared by the contract with fields: id, screen, fields, actions, message, errors, agent, payment, entryPoint.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/StepSpec
+  - term: HypermediaLinks
+    definition: 'Object declared by the contract with fields: self, submit.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/HypermediaLinks
+  - term: SessionResponse
+    definition: 'Object declared by the contract with fields: sessionId, appId, appVersion, status, stepSpec, stateVersion, complete, _links,
+      paymentReceipt.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/SessionResponse
+  - term: SessionListItem
+    definition: 'Object declared by the contract with fields: sessionId, appId, appVersion, status, currentStepId, startStepId, createdAt, updatedAt.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/SessionListItem
+  - term: FlowPaginationMeta
+    definition: 'Object declared by the contract with fields: nextCursor, hasMore, totalCount.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/FlowPaginationMeta
+  - term: X402Descriptor
+    definition: 'Object declared by the contract with fields: version, scheme, networkId, amountAtomicUnits, currency, recipient, description,
+      tokenAddress, permit2Address, spender.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/X402Descriptor
+  - term: AppVisibility
+    definition: 'Enumeration declared by the contract with values: public, permissioned, private.'
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/AppVisibility
+  - term: FlowAppSummary
+    definition: 'Object declared by the contract with fields: appId, displayName, description, publisher, visibility, categories, activeVersionCount,
+      latestVersion, createdAt, updatedAt, _links.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/FlowAppSummary
+  - term: AllowedComponents
+    definition: 'Object declared by the contract with fields: templates, fieldTypes, actionTypes.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/AllowedComponents
+  - term: VersionStatus
+    definition: 'Enumeration declared by the contract with values: active, deprecated, retired.'
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/VersionStatus
+  - term: AppType
+    definition: 'Enumeration declared by the contract with values: internal, external.'
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/AppType
+  - term: FlowAppDetail
+    definition: 'Object declared by the contract with fields: appId, displayName, description, publisher, visibility, categories, versions, createdAt,
+      updatedAt, _links.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/FlowAppDetail
+  - term: WebhookSubscription
+    definition: 'Object declared by the contract with fields: subscriptionId, appId, eventType, targetUrl, createdAt.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/WebhookSubscription
+  - term: WebhookEvent
+    definition: 'Object declared by the contract with fields: eventId, eventType, sessionId, payload, status, createdAt.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/WebhookEvent
+  - term: SwapQuote
+    definition: 'Object declared by the contract with fields: amountOutEstimated, amountOutMin, slippageBps, routeTokens, encodedPath.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/SwapQuote
+  - term: SwapCreateRequest
+    definition: 'Object declared by the contract with fields: tokenIn, tokenOut, amountIn, amountOutEstimated, amountOutMin, amountOutActual,
+      slippageBps, routeTokens, encodedPath, walletAddress, txHash.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/SwapCreateRequest
+  - term: WithdrawalNetwork
+    definition: Target L1 network for the withdrawal.
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/WithdrawalNetwork
+  - term: WithdrawalTokenSymbol
+    definition: 'Enumeration declared by the contract with values: QNT, uUSD, uGBP, uEUR, uToken.'
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/WithdrawalTokenSymbol
+  - term: WithdrawalStatus
+    definition: Withdrawal lifecycle state (L2 rollup to L1).
+    tags:
+    - Enumeration
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/WithdrawalStatus
+  - term: CreateWithdrawalRequest
+    definition: 'Object declared by the contract with fields: toNetwork, token, amount, fromAddress, toAddress, isNativeToErc20, l2TxHash, l2BlockNumber.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/CreateWithdrawalRequest
+  - term: WithdrawalRecord
+    definition: API projection of a withdrawal record.
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/WithdrawalRecord
+  - term: RecordProveTxRequest
+    definition: 'Object declared by the contract with fields: proveTxHash.'
+    tags:
+    - Object
+    source: openapi/quant-overledger-server-openapi.yml#/components/schemas/RecordProveTxRequest

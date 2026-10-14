@@ -1,0 +1,63 @@
+generated: '2026-10-14'
+method: derived
+source: the pre-flight dossier, apis.yml pointers, spec servers, well-known, vendors -- nothing fetched here
+generator: derive-hosts.py
+summary:
+  hosts: 5
+  own: 2
+  other_domain: 1
+  platform: 2
+  roles:
+  - marketing
+  - other
+  - portal
+  - source
+  - website
+hosts:
+- host: docs.overledger.dev
+  found_by:
+  - pointer
+  - apis[]
+  types:
+  - DeveloperPortal
+  serves:
+  - docs
+  registrable_domain: overledger.dev
+  role: portal
+  relation: other-domain
+- host: github.com
+  found_by:
+  - pointer
+  types:
+  - GitHubOrganization
+  serves: []
+  registrable_domain: github.com
+  role: source
+  relation: platform
+- host: quant.network
+  found_by:
+  - pointer
+  types:
+  - Blog
+  serves: []
+  registrable_domain: quant.network
+  role: marketing
+  relation: own
+- host: www.linkedin.com
+  found_by:
+  - pointer
+  types:
+  - LinkedIn
+  serves: []
+  registrable_domain: linkedin.com
+  role: other
+  relation: platform
+- host: www.quant.network
+  found_by:
+  - pointer
+  types:
+  - Website
+  serves: []
+  registrable_domain: quant.network
+  role: website
+  relation: own

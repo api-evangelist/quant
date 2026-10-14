@@ -1,0 +1,31 @@
+generated: '2026-10-14'
+method: derived
+source: openapi/quant-overledger-server-openapi.yml
+summary:
+  types:
+  - apiKey
+  - http
+  api_key_in:
+  - header
+schemes:
+- name: bearerAuth
+  type: http
+  scheme: bearer
+  bearerFormat: JWT
+  description: |-
+    A Keycloak access token (JWT), verified against the realm JWKS
+    (signature / issuer / expiry). The caller's identity is the token's
+    `sub` claim — this is **not** a `clientId`.
+  sources:
+  - openapi/quant-overledger-server-openapi.yml
+- name: apiKeyAuth
+  type: apiKey
+  in: header
+  parameter: X-API-Key
+  description: |-
+    An Overledger-issued API key of the form `fk_<keyId>.<secret>`, minted via
+    `POST /users/me/api-keys`. Accepted on any route and **takes precedence**
+    over the `Authorization` header when both are supplied. Resolves to the
+    same identity (Keycloak `sub`) as the equivalent Bearer JWT.
+  sources:
+  - openapi/quant-overledger-server-openapi.yml

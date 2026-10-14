@@ -1,0 +1,213 @@
+generated: '2026-10-14'
+method: derived
+generator: derive-mcp-candidate.py
+source:
+- openapi/quant-overledger-server-openapi.yml
+status: candidate
+deployment:
+  mode: none
+  auth: unknown
+  verified: derived
+note: No MCP server was found. No probe result in the dossier. Candidate tools below are derived from the 70 operation(s) in the provider's own
+  OpenAPI (40 listed); they describe what a server WOULD expose, not one that exists.
+tools:
+- name: subscribe_address
+  operationId: subscribeAddress
+  method: POST
+  path: /accounts/subscribe/{address}
+  description: Subscribe to events involving an address
+- name: unsubscribe_address
+  operationId: unsubscribeAddress
+  method: DELETE
+  path: /accounts/unsubscribe/{subscriptionId}
+  description: Cancel an address subscription
+- name: list_address_events
+  operationId: listAddressEvents
+  method: GET
+  path: /accounts/{address}/events
+  description: List recorded events for an address
+- name: get_deployed-contracts
+  operationId: GET /deployed-contracts/{contractAddress}
+  method: GET
+  path: /deployed-contracts/{contractAddress}
+  description: Get contract details
+- name: update_deployed-contracts
+  operationId: PUT /deployed-contracts/{contractAddress}
+  method: PUT
+  path: /deployed-contracts/{contractAddress}
+  description: Update contract visibility
+- name: get_deployed-contracts_permissions
+  operationId: GET /deployed-contracts/{contractAddress}/permissions
+  method: GET
+  path: /deployed-contracts/{contractAddress}/permissions
+  description: List permissions for a contract
+- name: create_deployed-contracts_permissions
+  operationId: POST /deployed-contracts/{contractAddress}/permissions
+  method: POST
+  path: /deployed-contracts/{contractAddress}/permissions
+  description: Grant permission to a user for a permissioned contract
+- name: delete_deployed-contracts_permissions
+  operationId: DELETE /deployed-contracts/{contractAddress}/permissions
+  method: DELETE
+  path: /deployed-contracts/{contractAddress}/permissions
+  description: Revoke permission from a user for a contract
+- name: create_deposit
+  operationId: createDeposit
+  method: POST
+  path: /deposits
+  description: Create a deposit record
+- name: get_deposit_allowance
+  operationId: getDepositAllowance
+  method: GET
+  path: /deposits/allowance
+  description: Get token deposit allowances for a wallet
+- name: get_deposit_balances
+  operationId: getDepositBalances
+  method: GET
+  path: /deposits/balances
+  description: Get token deposit balances for a wallet
+- name: get_deposit
+  operationId: getDeposit
+  method: GET
+  path: /deposits/{id}
+  description: Get a deposit by ID
+- name: check_deposit_status
+  operationId: checkDepositStatus
+  method: GET
+  path: /deposits/{id}/status
+  description: Refresh + return a deposit's on-chain status
+- name: subscribe_event
+  operationId: subscribeEvent
+  method: POST
+  path: /events/subscribe
+  description: Subscribe to a specific contract event signature
+- name: list_event_subscription_events
+  operationId: listEventSubscriptionEvents
+  method: GET
+  path: /events/subscriptions/{subscriptionId}/events
+  description: List recorded events for a contract-event subscription
+- name: unsubscribe_event
+  operationId: unsubscribeEvent
+  method: DELETE
+  path: /events/unsubscribe/{subscriptionId}
+  description: Cancel a contract-event subscription
+- name: replay_events
+  operationId: replayEvents
+  method: GET
+  path: /flow/apps/{appId}/events
+  description: List / replay webhook events for a Flow App
+- name: query_app_state
+  operationId: queryAppState
+  method: GET
+  path: /flow/apps/{appId}/query/{queryId}
+  description: Execute a read-only query against a Flow App
+- name: create_subscription
+  operationId: createSubscription
+  method: POST
+  path: /flow/apps/{appId}/subscriptions
+  description: Subscribe to webhook events for a Flow App
+- name: list_subscriptions
+  operationId: listSubscriptions
+  method: GET
+  path: /flow/apps/{appId}/subscriptions
+  description: List webhook subscriptions for a Flow App
+- name: delete_subscription
+  operationId: deleteSubscription
+  method: DELETE
+  path: /flow/apps/{appId}/subscriptions/{subscriptionId}
+  description: Delete a webhook subscription
+- name: list_apps
+  operationId: listApps
+  method: GET
+  path: /flow/registry/apps
+  description: List available Flow Apps
+- name: get_allowed_components
+  operationId: getAllowedComponents
+  method: GET
+  path: /flow/registry/apps/components
+  description: List allowed UI component types
+- name: get_app
+  operationId: getApp
+  method: GET
+  path: /flow/registry/apps/{appId}
+  description: Get a Flow App's details and versions
+- name: create_session
+  operationId: createSession
+  method: POST
+  path: /flow/sessions
+  description: Create a new Flow App session
+- name: list_sessions
+  operationId: listSessions
+  method: GET
+  path: /flow/sessions
+  description: List sessions for the authenticated client
+- name: get_session
+  operationId: getSession
+  method: GET
+  path: /flow/sessions/{sessionId}
+  description: Get session metadata
+- name: get_step
+  operationId: getStep
+  method: GET
+  path: /flow/sessions/{sessionId}/steps/{stepId}
+  description: Get the current step's StepSpec
+- name: submit_step
+  operationId: submitStep
+  method: POST
+  path: /flow/sessions/{sessionId}/steps/{stepId}
+  description: Submit field values and an action for the current step
+- name: get_health
+  operationId: GET /health
+  method: GET
+  path: /health
+  description: Liveness check
+- name: get_metrics
+  operationId: GET /metrics
+  method: GET
+  path: /metrics
+  description: Prometheus metrics
+- name: get_networks
+  operationId: GET /networks
+  method: GET
+  path: /networks
+  description: List all networks
+- name: get_networks_fusion
+  operationId: GET /networks/fusion
+  method: GET
+  path: /networks/fusion
+  description: List Fusion Rollup connected networks
+- name: get_networks_total
+  operationId: GET /networks/total
+  method: GET
+  path: /networks/total
+  description: Get total network count
+- name: create_nodes
+  operationId: POST /nodes
+  method: POST
+  path: /nodes
+  description: Register a new DLT node
+- name: delete_nodes
+  operationId: DELETE /nodes/{nodeId}
+  method: DELETE
+  path: /nodes/{nodeId}
+  description: Remove a registered node
+- name: get_ready
+  operationId: GET /ready
+  method: GET
+  path: /ready
+  description: Readiness check
+- name: create_rpc
+  operationId: POST /rpc/{apiKey}
+  method: POST
+  path: /rpc/{apiKey}
+  description: Fusion L2 JSON-RPC
+- name: create_stakes
+  operationId: POST /stakes
+  method: POST
+  path: /stakes
+  description: Record a QNT stake transaction
+- name: get_stakes_address
+  operationId: GET /stakes/address
+  method: GET
+  path: /stakes/address
+  description: Get the QNT staking address for this user

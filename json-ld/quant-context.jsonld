@@ -1,0 +1,761 @@
+{
+  "@context": {
+    "@vocab": "https://quant.network/schema#",
+    "schema": "https://schema.org/",
+    "xsd": "http://www.w3.org/2001/XMLSchema#",
+    "dcterms": "http://purl.org/dc/terms/",
+    "quant": "https://quant.network/schema#",
+    "JsonRpcRequest": "quant:JsonRpcRequest",
+    "jsonrpc": {
+      "@id": "quant:jsonrpc",
+      "@type": "xsd:string"
+    },
+    "method": {
+      "@id": "quant:method",
+      "@type": "xsd:string"
+    },
+    "id": {
+      "@id": "quant:id"
+    },
+    "params": {
+      "@id": "quant:params",
+      "@container": "@list"
+    },
+    "JsonRpcResponse": "quant:JsonRpcResponse",
+    "result": {
+      "@id": "quant:result"
+    },
+    "JsonRpcError": "quant:JsonRpcError",
+    "error": {
+      "@id": "quant:error"
+    },
+    "StandardError": "quant:StandardError",
+    "timestamp": {
+      "@id": "quant:timestamp",
+      "@type": "xsd:integer"
+    },
+    "status": {
+      "@id": "quant:status",
+      "@type": "xsd:integer"
+    },
+    "message": {
+      "@id": "quant:message",
+      "@type": "xsd:string"
+    },
+    "path": {
+      "@id": "quant:path",
+      "@type": "xsd:string"
+    },
+    "ContractVisibility": "quant:ContractVisibility",
+    "DeployedContract": "quant:DeployedContract",
+    "deployerId": {
+      "@id": "quant:deployerId",
+      "@type": "xsd:string"
+    },
+    "address": {
+      "@id": "quant:address",
+      "@type": "@id"
+    },
+    "name": {
+      "@id": "quant:name",
+      "@type": "xsd:string"
+    },
+    "type": {
+      "@id": "quant:type",
+      "@type": "xsd:string"
+    },
+    "visibility": {
+      "@id": "quant:visibility",
+      "@type": "@id"
+    },
+    "whitelistedContractIds": {
+      "@id": "quant:whitelistedContractIds",
+      "@container": "@list"
+    },
+    "createdAt": {
+      "@id": "quant:createdAt",
+      "@type": "xsd:dateTime"
+    },
+    "updatedAt": {
+      "@id": "quant:updatedAt",
+      "@type": "xsd:dateTime"
+    },
+    "PaginatedMeta": "quant:PaginatedMeta",
+    "total": {
+      "@id": "quant:total",
+      "@type": "xsd:integer"
+    },
+    "page": {
+      "@id": "quant:page",
+      "@type": "xsd:integer"
+    },
+    "pageSize": {
+      "@id": "quant:pageSize",
+      "@type": "xsd:integer"
+    },
+    "hasMore": {
+      "@id": "quant:hasMore",
+      "@type": "xsd:boolean"
+    },
+    "DltType": "quant:DltType",
+    "Node": "quant:Node",
+    "_id": {
+      "@id": "quant:_id",
+      "@type": "xsd:string"
+    },
+    "userId": {
+      "@id": "quant:userId",
+      "@type": "xsd:string"
+    },
+    "network": {
+      "@id": "quant:network",
+      "@type": "xsd:string"
+    },
+    "dlt": {
+      "@id": "quant:dlt",
+      "@type": "@id"
+    },
+    "networkId": {
+      "@id": "quant:networkId",
+      "@type": "xsd:string"
+    },
+    "Provider": "quant:Provider",
+    "url": {
+      "@id": "quant:url",
+      "@type": "@id"
+    },
+    "resetPolicy": {
+      "@id": "quant:resetPolicy",
+      "@type": "@id"
+    },
+    "Stake": "quant:Stake",
+    "txHash": {
+      "@id": "quant:txHash",
+      "@type": "@id"
+    },
+    "amount": {
+      "@id": "quant:amount",
+      "@type": "xsd:string"
+    },
+    "OffsetPagination": "quant:OffsetPagination",
+    "Swap": "quant:Swap",
+    "tokenIn": {
+      "@id": "quant:tokenIn",
+      "@type": "xsd:string"
+    },
+    "tokenOut": {
+      "@id": "quant:tokenOut",
+      "@type": "xsd:string"
+    },
+    "amountIn": {
+      "@id": "quant:amountIn",
+      "@type": "xsd:string"
+    },
+    "amountOutEstimated": {
+      "@id": "quant:amountOutEstimated",
+      "@type": "xsd:string"
+    },
+    "amountOutMin": {
+      "@id": "quant:amountOutMin",
+      "@type": "xsd:string"
+    },
+    "amountOutActual": {
+      "@id": "quant:amountOutActual",
+      "@type": "xsd:string"
+    },
+    "slippageBps": {
+      "@id": "quant:slippageBps",
+      "@type": "xsd:integer"
+    },
+    "routeTokens": {
+      "@id": "quant:routeTokens",
+      "@container": "@list"
+    },
+    "encodedPath": {
+      "@id": "quant:encodedPath",
+      "@type": "xsd:string"
+    },
+    "walletAddress": {
+      "@id": "quant:walletAddress",
+      "@type": "@id"
+    },
+    "failureReason": {
+      "@id": "quant:failureReason",
+      "@type": "xsd:string"
+    },
+    "L1Network": "quant:L1Network",
+    "TokenSymbol": "quant:TokenSymbol",
+    "Deposit": "quant:Deposit",
+    "fromNetwork": {
+      "@id": "quant:fromNetwork",
+      "@type": "@id"
+    },
+    "token": {
+      "@id": "quant:token",
+      "@type": "@id"
+    },
+    "fromAddress": {
+      "@id": "quant:fromAddress",
+      "@type": "@id"
+    },
+    "toAddress": {
+      "@id": "quant:toAddress",
+      "@type": "@id"
+    },
+    "approvalTxHash": {
+      "@id": "quant:approvalTxHash",
+      "@type": "@id"
+    },
+    "CreateDepositRequest": "quant:CreateDepositRequest",
+    "ContractPermission": "quant:ContractPermission",
+    "contractAddress": {
+      "@id": "quant:contractAddress",
+      "@type": "@id"
+    },
+    "alias": {
+      "@id": "quant:alias",
+      "@type": "xsd:string"
+    },
+    "description": {
+      "@id": "quant:description",
+      "@type": "xsd:string"
+    },
+    "AddNodeRequest": "quant:AddNodeRequest",
+    "Network": "quant:Network",
+    "environment": {
+      "@id": "quant:environment",
+      "@type": "xsd:string"
+    },
+    "capacity": {
+      "@id": "quant:capacity",
+      "@type": "xsd:string"
+    },
+    "isFusion": {
+      "@id": "quant:isFusion",
+      "@type": "xsd:boolean"
+    },
+    "rpc": {
+      "@id": "quant:rpc",
+      "@type": "xsd:string"
+    },
+    "ProblemDetails": "quant:ProblemDetails",
+    "title": {
+      "@id": "quant:title",
+      "@type": "xsd:string"
+    },
+    "detail": {
+      "@id": "quant:detail",
+      "@type": "xsd:string"
+    },
+    "retryable": {
+      "@id": "quant:retryable",
+      "@type": "xsd:boolean"
+    },
+    "instance": {
+      "@id": "quant:instance",
+      "@type": "xsd:string"
+    },
+    "SessionStatus": "quant:SessionStatus",
+    "TemplateType": "quant:TemplateType",
+    "FieldType": "quant:FieldType",
+    "ActionType": "quant:ActionType",
+    "ActionStyle": "quant:ActionStyle",
+    "DisplayFormat": "quant:DisplayFormat",
+    "RiskLevel": "quant:RiskLevel",
+    "ScreenSpec": "quant:ScreenSpec",
+    "template": {
+      "@id": "quant:template",
+      "@type": "@id"
+    },
+    "icon": {
+      "@id": "quant:icon",
+      "@type": "xsd:string"
+    },
+    "SelectOption": "quant:SelectOption",
+    "value": {
+      "@id": "quant:value",
+      "@type": "xsd:string"
+    },
+    "label": {
+      "@id": "quant:label",
+      "@type": "xsd:string"
+    },
+    "TableColumn": "quant:TableColumn",
+    "key": {
+      "@id": "quant:key",
+      "@type": "xsd:string"
+    },
+    "format": {
+      "@id": "quant:format",
+      "@type": "@id"
+    },
+    "WalletConfig": "quant:WalletConfig",
+    "action": {
+      "@id": "quant:action",
+      "@type": "xsd:string"
+    },
+    "chains": {
+      "@id": "quant:chains",
+      "@container": "@list"
+    },
+    "transaction": {
+      "@id": "quant:transaction"
+    },
+    "StepField": "quant:StepField",
+    "placeholder": {
+      "@id": "quant:placeholder",
+      "@type": "xsd:string"
+    },
+    "required": {
+      "@id": "quant:required",
+      "@type": "xsd:boolean"
+    },
+    "defaultValue": {
+      "@id": "quant:defaultValue"
+    },
+    "minLength": {
+      "@id": "quant:minLength",
+      "@type": "xsd:integer"
+    },
+    "maxLength": {
+      "@id": "quant:maxLength",
+      "@type": "xsd:integer"
+    },
+    "pattern": {
+      "@id": "quant:pattern",
+      "@type": "xsd:string"
+    },
+    "rows": {
+      "@id": "quant:rows",
+      "@type": "xsd:integer"
+    },
+    "min": {
+      "@id": "quant:min"
+    },
+    "max": {
+      "@id": "quant:max"
+    },
+    "step": {
+      "@id": "quant:step",
+      "@type": "xsd:decimal"
+    },
+    "currencyCode": {
+      "@id": "quant:currencyCode",
+      "@type": "xsd:string"
+    },
+    "options": {
+      "@id": "quant:options",
+      "@container": "@list"
+    },
+    "defaultChecked": {
+      "@id": "quant:defaultChecked",
+      "@type": "xsd:boolean"
+    },
+    "dataRef": {
+      "@id": "quant:dataRef",
+      "@type": "xsd:string"
+    },
+    "submitResolve": {
+      "@id": "quant:submitResolve",
+      "@type": "xsd:string"
+    },
+    "columns": {
+      "@id": "quant:columns",
+      "@container": "@list"
+    },
+    "rowsData": {
+      "@id": "quant:rowsData",
+      "@container": "@list"
+    },
+    "emptyMessage": {
+      "@id": "quant:emptyMessage",
+      "@type": "xsd:string"
+    },
+    "limit": {
+      "@id": "quant:limit",
+      "@type": "xsd:integer"
+    },
+    "config": {
+      "@id": "quant:config",
+      "@type": "@id"
+    },
+    "StepAction": "quant:StepAction",
+    "style": {
+      "@id": "quant:style",
+      "@type": "@id"
+    },
+    "disabled": {
+      "@id": "quant:disabled",
+      "@type": "xsd:boolean"
+    },
+    "confirmationMessage": {
+      "@id": "quant:confirmationMessage",
+      "@type": "xsd:string"
+    },
+    "StepMessage": "quant:StepMessage",
+    "text": {
+      "@id": "quant:text",
+      "@type": "xsd:string"
+    },
+    "BusinessValidationError": "quant:BusinessValidationError",
+    "fieldId": {
+      "@id": "quant:fieldId",
+      "@type": "xsd:string"
+    },
+    "code": {
+      "@id": "quant:code",
+      "@type": "xsd:string"
+    },
+    "AgentMeta": "quant:AgentMeta",
+    "hint": {
+      "@id": "quant:hint",
+      "@type": "xsd:string"
+    },
+    "emits": {
+      "@id": "quant:emits",
+      "@container": "@list"
+    },
+    "riskLevel": {
+      "@id": "quant:riskLevel",
+      "@type": "@id"
+    },
+    "outputQuery": {
+      "@id": "quant:outputQuery",
+      "@type": "xsd:string"
+    },
+    "idempotent": {
+      "@id": "quant:idempotent",
+      "@type": "xsd:boolean"
+    },
+    "StepPayment": "quant:StepPayment",
+    "amountAtomicUnits": {
+      "@id": "quant:amountAtomicUnits",
+      "@type": "xsd:string"
+    },
+    "currency": {
+      "@id": "quant:currency",
+      "@type": "xsd:string"
+    },
+    "chain": {
+      "@id": "quant:chain",
+      "@type": "xsd:string"
+    },
+    "recipient": {
+      "@id": "quant:recipient",
+      "@type": "@id"
+    },
+    "actions": {
+      "@id": "quant:actions",
+      "@container": "@list"
+    },
+    "tokenAddress": {
+      "@id": "quant:tokenAddress",
+      "@type": "@id"
+    },
+    "X402SettlementReceipt": "quant:X402SettlementReceipt",
+    "chainId": {
+      "@id": "quant:chainId",
+      "@type": "xsd:integer"
+    },
+    "blockNumber": {
+      "@id": "quant:blockNumber",
+      "@type": "xsd:integer"
+    },
+    "settledAt": {
+      "@id": "quant:settledAt",
+      "@type": "xsd:dateTime"
+    },
+    "StepSpec": "quant:StepSpec",
+    "screen": {
+      "@id": "quant:screen",
+      "@type": "@id"
+    },
+    "fields": {
+      "@id": "quant:fields",
+      "@container": "@list"
+    },
+    "errors": {
+      "@id": "quant:errors",
+      "@container": "@list"
+    },
+    "agent": {
+      "@id": "quant:agent",
+      "@type": "@id"
+    },
+    "payment": {
+      "@id": "quant:payment",
+      "@type": "@id"
+    },
+    "entryPoint": {
+      "@id": "quant:entryPoint",
+      "@type": "xsd:boolean"
+    },
+    "HypermediaLinks": "quant:HypermediaLinks",
+    "self": {
+      "@id": "quant:self",
+      "@type": "xsd:string"
+    },
+    "submit": {
+      "@id": "quant:submit",
+      "@type": "xsd:string"
+    },
+    "SessionResponse": "quant:SessionResponse",
+    "sessionId": {
+      "@id": "quant:sessionId",
+      "@type": "xsd:string"
+    },
+    "appId": {
+      "@id": "quant:appId",
+      "@type": "xsd:string"
+    },
+    "appVersion": {
+      "@id": "quant:appVersion",
+      "@type": "xsd:string"
+    },
+    "stepSpec": {
+      "@id": "quant:stepSpec",
+      "@type": "@id"
+    },
+    "stateVersion": {
+      "@id": "quant:stateVersion",
+      "@type": "xsd:integer"
+    },
+    "complete": {
+      "@id": "quant:complete",
+      "@type": "xsd:boolean"
+    },
+    "_links": {
+      "@id": "quant:_links",
+      "@type": "@id"
+    },
+    "paymentReceipt": {
+      "@id": "quant:paymentReceipt",
+      "@type": "@id"
+    },
+    "SessionListItem": "quant:SessionListItem",
+    "currentStepId": {
+      "@id": "quant:currentStepId",
+      "@type": "xsd:string"
+    },
+    "startStepId": {
+      "@id": "quant:startStepId",
+      "@type": "xsd:string"
+    },
+    "FlowPaginationMeta": "quant:FlowPaginationMeta",
+    "nextCursor": {
+      "@id": "quant:nextCursor",
+      "@type": "xsd:string"
+    },
+    "totalCount": {
+      "@id": "quant:totalCount",
+      "@type": "xsd:integer"
+    },
+    "X402Descriptor": "quant:X402Descriptor",
+    "version": {
+      "@id": "quant:version",
+      "@type": "xsd:string"
+    },
+    "scheme": {
+      "@id": "quant:scheme",
+      "@type": "xsd:string"
+    },
+    "permit2Address": {
+      "@id": "quant:permit2Address",
+      "@type": "xsd:string"
+    },
+    "spender": {
+      "@id": "quant:spender",
+      "@type": "xsd:string"
+    },
+    "AppVisibility": "quant:AppVisibility",
+    "FlowAppSummary": "quant:FlowAppSummary",
+    "displayName": {
+      "@id": "quant:displayName",
+      "@type": "xsd:string"
+    },
+    "publisher": {
+      "@id": "quant:publisher",
+      "@type": "xsd:string"
+    },
+    "categories": {
+      "@id": "quant:categories",
+      "@container": "@list"
+    },
+    "activeVersionCount": {
+      "@id": "quant:activeVersionCount",
+      "@type": "xsd:integer"
+    },
+    "latestVersion": {
+      "@id": "quant:latestVersion",
+      "@type": "xsd:string"
+    },
+    "AllowedComponents": "quant:AllowedComponents",
+    "templates": {
+      "@id": "quant:templates",
+      "@container": "@list"
+    },
+    "fieldTypes": {
+      "@id": "quant:fieldTypes",
+      "@container": "@list"
+    },
+    "actionTypes": {
+      "@id": "quant:actionTypes",
+      "@container": "@list"
+    },
+    "VersionStatus": "quant:VersionStatus",
+    "AppType": "quant:AppType",
+    "FlowAppDetail": "quant:FlowAppDetail",
+    "versions": {
+      "@id": "quant:versions",
+      "@container": "@list"
+    },
+    "WebhookSubscription": "quant:WebhookSubscription",
+    "subscriptionId": {
+      "@id": "quant:subscriptionId",
+      "@type": "xsd:string"
+    },
+    "eventType": {
+      "@id": "quant:eventType",
+      "@type": "xsd:string"
+    },
+    "targetUrl": {
+      "@id": "quant:targetUrl",
+      "@type": "@id"
+    },
+    "WebhookEvent": "quant:WebhookEvent",
+    "eventId": {
+      "@id": "quant:eventId",
+      "@type": "xsd:string"
+    },
+    "payload": {
+      "@id": "quant:payload"
+    },
+    "SwapQuote": "quant:SwapQuote",
+    "SwapCreateRequest": "quant:SwapCreateRequest",
+    "WithdrawalNetwork": "quant:WithdrawalNetwork",
+    "WithdrawalTokenSymbol": "quant:WithdrawalTokenSymbol",
+    "WithdrawalStatus": "quant:WithdrawalStatus",
+    "CreateWithdrawalRequest": "quant:CreateWithdrawalRequest",
+    "toNetwork": {
+      "@id": "quant:toNetwork",
+      "@type": "@id"
+    },
+    "isNativeToErc20": {
+      "@id": "quant:isNativeToErc20",
+      "@type": "xsd:boolean"
+    },
+    "l2TxHash": {
+      "@id": "quant:l2TxHash",
+      "@type": "@id"
+    },
+    "l2BlockNumber": {
+      "@id": "quant:l2BlockNumber",
+      "@type": "xsd:integer"
+    },
+    "WithdrawalRecord": "quant:WithdrawalRecord",
+    "withdrawalHash": {
+      "@id": "quant:withdrawalHash",
+      "@type": "xsd:string"
+    },
+    "withdrawalTx": {
+      "@id": "quant:withdrawalTx"
+    },
+    "disputeGameIndex": {
+      "@id": "quant:disputeGameIndex",
+      "@type": "xsd:integer"
+    },
+    "outputRootProof": {
+      "@id": "quant:outputRootProof"
+    },
+    "withdrawalProof": {
+      "@id": "quant:withdrawalProof",
+      "@container": "@list"
+    },
+    "proveTxHash": {
+      "@id": "quant:proveTxHash",
+      "@type": "@id"
+    },
+    "finalizeTxHash": {
+      "@id": "quant:finalizeTxHash",
+      "@type": "@id"
+    },
+    "provableAt": {
+      "@id": "quant:provableAt",
+      "@type": "xsd:dateTime"
+    },
+    "finalizableAt": {
+      "@id": "quant:finalizableAt",
+      "@type": "xsd:dateTime"
+    },
+    "lastStatusCheckAt": {
+      "@id": "quant:lastStatusCheckAt",
+      "@type": "xsd:dateTime"
+    },
+    "completedAt": {
+      "@id": "quant:completedAt",
+      "@type": "xsd:dateTime"
+    },
+    "RecordProveTxRequest": "quant:RecordProveTxRequest",
+    "RecordFinalizeTxRequest": "quant:RecordFinalizeTxRequest",
+    "ApiKeyScope": "quant:ApiKeyScope",
+    "CreateApiKeyRequest": "quant:CreateApiKeyRequest",
+    "scopes": {
+      "@id": "quant:scopes",
+      "@container": "@list"
+    },
+    "expiresAt": {
+      "@id": "quant:expiresAt",
+      "@type": "xsd:dateTime"
+    },
+    "MintedApiKey": "quant:MintedApiKey",
+    "apiKey": {
+      "@id": "quant:apiKey",
+      "@type": "xsd:string"
+    },
+    "keyId": {
+      "@id": "quant:keyId",
+      "@type": "xsd:string"
+    },
+    "lastUsedAt": {
+      "@id": "quant:lastUsedAt",
+      "@type": "xsd:dateTime"
+    },
+    "ApiKeySummary": "quant:ApiKeySummary",
+    "revokedAt": {
+      "@id": "quant:revokedAt",
+      "@type": "xsd:dateTime"
+    },
+    "TrackerSubscribeRequest": "quant:TrackerSubscribeRequest",
+    "callbackUrl": {
+      "@id": "quant:callbackUrl",
+      "@type": "@id"
+    },
+    "AddressSubscription": "quant:AddressSubscription",
+    "successful": {
+      "@id": "quant:successful",
+      "@type": "xsd:boolean"
+    },
+    "UnsubscribeResult": "quant:UnsubscribeResult",
+    "TrackerEvent": "quant:TrackerEvent",
+    "targetAddress": {
+      "@id": "quant:targetAddress",
+      "@type": "@id"
+    },
+    "EventSubscription": "quant:EventSubscription",
+    "eventName": {
+      "@id": "quant:eventName",
+      "@type": "xsd:string"
+    },
+    "eventParams": {
+      "@id": "quant:eventParams",
+      "@container": "@list"
+    }
+  },
+  "@type": "schema:Dataset",
+  "schema:name": "Quant Network API JSON-LD context",
+  "schema:description": "A JSON-LD @context for the objects Quant Network's own API contract declares: one class per component schema, one property per declared field, typed from the contract. Derived by script (derive-json-ld.py, 2026-10-14) from openapi/quant-overledger-server-openapi.yml.",
+  "dcterms:created": "2026-10-14",
+  "dcterms:source": [
+    "openapi/quant-overledger-server-openapi.yml"
+  ]
+}

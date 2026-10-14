@@ -1,0 +1,450 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/quant/main/json-schema/quant-step-spec-schema.json",
+  "title": "StepSpec",
+  "x-generated": "2026-10-14",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/quant-overledger-server-openapi.yml#/components/schemas/StepSpec",
+  "type": "object",
+  "required": [
+    "id",
+    "screen",
+    "fields",
+    "actions"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "screen": {
+      "$ref": "#/$defs/ScreenSpec"
+    },
+    "fields": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/StepField"
+      }
+    },
+    "actions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/StepAction"
+      }
+    },
+    "message": {
+      "oneOf": [
+        {
+          "type": "string"
+        },
+        {
+          "$ref": "#/$defs/StepMessage"
+        }
+      ]
+    },
+    "errors": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/BusinessValidationError"
+      }
+    },
+    "agent": {
+      "$ref": "#/$defs/AgentMeta"
+    },
+    "payment": {
+      "$ref": "#/$defs/StepPayment"
+    },
+    "entryPoint": {
+      "type": "boolean",
+      "description": "Set by Overledger when this step is a declared session entry point"
+    }
+  },
+  "$defs": {
+    "ActionStyle": {
+      "type": "string",
+      "enum": [
+        "primary",
+        "secondary",
+        "danger"
+      ]
+    },
+    "ActionType": {
+      "type": "string",
+      "enum": [
+        "submit"
+      ]
+    },
+    "AgentMeta": {
+      "type": "object",
+      "properties": {
+        "hint": {
+          "type": "string",
+          "description": "LLM-optimised description of this step's purpose"
+        },
+        "emits": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Webhook event type IDs this step may emit"
+        },
+        "riskLevel": {
+          "$ref": "#/$defs/RiskLevel"
+        },
+        "outputQuery": {
+          "type": "string",
+          "description": "Query ID to read the resulting state after this step"
+        },
+        "idempotent": {
+          "type": "boolean",
+          "description": "Whether this step is safe to retry without side-effects"
+        }
+      }
+    },
+    "BusinessValidationError": {
+      "type": "object",
+      "required": [
+        "fieldId",
+        "message"
+      ],
+      "properties": {
+        "fieldId": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "DisplayFormat": {
+      "type": "string",
+      "enum": [
+        "text",
+        "currency",
+        "date",
+        "percentage"
+      ]
+    },
+    "EvmAddress": {
+      "type": "string",
+      "pattern": "^0x[a-fA-F0-9]{40}$"
+    },
+    "FieldType": {
+      "type": "string",
+      "enum": [
+        "text-input",
+        "text-area",
+        "number",
+        "currency",
+        "select",
+        "checkbox",
+        "date",
+        "radio-group",
+        "display",
+        "table",
+        "wallet"
+      ]
+    },
+    "RiskLevel": {
+      "type": "string",
+      "enum": [
+        "safe",
+        "caution",
+        "irreversible"
+      ]
+    },
+    "ScreenSpec": {
+      "type": "object",
+      "required": [
+        "template"
+      ],
+      "properties": {
+        "template": {
+          "$ref": "#/$defs/TemplateType"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "icon": {
+          "type": "string"
+        }
+      }
+    },
+    "SelectOption": {
+      "type": "object",
+      "required": [
+        "value",
+        "label"
+      ],
+      "properties": {
+        "value": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        }
+      }
+    },
+    "StepAction": {
+      "type": "object",
+      "required": [
+        "id",
+        "type",
+        "label"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "$ref": "#/$defs/ActionType"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 1
+        },
+        "style": {
+          "$ref": "#/$defs/ActionStyle"
+        },
+        "disabled": {
+          "type": "boolean"
+        },
+        "confirmationMessage": {
+          "type": "string"
+        }
+      }
+    },
+    "StepField": {
+      "type": "object",
+      "required": [
+        "id",
+        "type"
+      ],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "type": {
+          "$ref": "#/$defs/FieldType"
+        },
+        "label": {
+          "type": "string"
+        },
+        "placeholder": {
+          "type": "string"
+        },
+        "required": {
+          "type": "boolean"
+        },
+        "defaultValue": {},
+        "minLength": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "maxLength": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pattern": {
+          "type": "string"
+        },
+        "rows": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "min": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "max": {
+          "oneOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "string"
+            }
+          ]
+        },
+        "step": {
+          "type": "number"
+        },
+        "currencyCode": {
+          "type": "string"
+        },
+        "options": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SelectOption"
+          }
+        },
+        "defaultChecked": {
+          "type": "boolean"
+        },
+        "value": {},
+        "format": {
+          "$ref": "#/$defs/DisplayFormat"
+        },
+        "dataRef": {
+          "type": "string"
+        },
+        "submitResolve": {
+          "type": "string",
+          "description": "For `select` / `radio-group` fields whose options are sourced from\n`$appState`. On submit, Overledger replaces the chosen option's\n`value` with the full underlying record from app state before\ninvoking the step handler. Format mirrors `dataRef`\n(e.g. `\"$appState.connections\"`); the handler receives the object\nat that path keyed by the selected option, not just the option id.\n"
+        },
+        "columns": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/TableColumn"
+          }
+        },
+        "rowsData": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": true
+          }
+        },
+        "emptyMessage": {
+          "type": "string"
+        },
+        "limit": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "pageSize": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "config": {
+          "$ref": "#/$defs/WalletConfig"
+        }
+      },
+      "description": "Field schema is polymorphic on `type`. Not all properties apply to every type:\n- text-input / text-area: placeholder, required, minLength, maxLength, pattern, rows (text-area only)\n- number / currency: required, min, max, step, currencyCode (currency only)\n- select / radio-group: required, options, dataRef, submitResolve, limit\n- checkbox: required, defaultChecked\n- date: required, min (ISO date string), max (ISO date string)\n- display: value, format, dataRef\n- table: columns (required), rowsData, emptyMessage, dataRef, limit, pageSize\n- wallet: config (required)\n"
+    },
+    "StepMessage": {
+      "type": "object",
+      "required": [
+        "text"
+      ],
+      "properties": {
+        "text": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "info",
+            "warning",
+            "error",
+            "success"
+          ]
+        }
+      }
+    },
+    "StepPayment": {
+      "type": "object",
+      "required": [
+        "amountAtomicUnits",
+        "currency",
+        "chain",
+        "recipient"
+      ],
+      "properties": {
+        "amountAtomicUnits": {
+          "type": "string",
+          "pattern": "^\\d+$",
+          "description": "Positive integer string in smallest denomination (e.g. \"5000000\" for 5 USDC)"
+        },
+        "currency": {
+          "type": "string"
+        },
+        "chain": {
+          "type": "string"
+        },
+        "recipient": {
+          "$ref": "#/$defs/EvmAddress"
+        },
+        "description": {
+          "type": "string"
+        },
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Action IDs that require payment. Defaults to all submit actions."
+        },
+        "tokenAddress": {
+          "$ref": "#/$defs/EvmAddress"
+        }
+      }
+    },
+    "TableColumn": {
+      "type": "object",
+      "required": [
+        "key",
+        "label"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "format": {
+          "$ref": "#/$defs/DisplayFormat"
+        }
+      }
+    },
+    "TemplateType": {
+      "type": "string",
+      "enum": [
+        "form",
+        "review",
+        "info",
+        "document"
+      ]
+    },
+    "WalletConfig": {
+      "type": "object",
+      "required": [
+        "action"
+      ],
+      "properties": {
+        "action": {
+          "type": "string"
+        },
+        "chains": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "transaction": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

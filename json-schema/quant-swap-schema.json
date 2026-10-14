@@ -1,0 +1,96 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://raw.githubusercontent.com/api-evangelist/quant/main/json-schema/quant-swap-schema.json",
+  "title": "Swap",
+  "x-generated": "2026-10-14",
+  "x-method": "derived",
+  "x-generator": "derive-json-schema.py",
+  "x-source": "openapi/quant-overledger-server-openapi.yml#/components/schemas/Swap",
+  "type": "object",
+  "required": [
+    "id",
+    "userId",
+    "tokenIn",
+    "tokenOut",
+    "amountIn",
+    "amountOutEstimated",
+    "amountOutMin",
+    "slippageBps",
+    "routeTokens",
+    "encodedPath",
+    "walletAddress",
+    "status",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "userId": {
+      "type": "string"
+    },
+    "tokenIn": {
+      "type": "string"
+    },
+    "tokenOut": {
+      "type": "string"
+    },
+    "amountIn": {
+      "type": "string"
+    },
+    "amountOutEstimated": {
+      "type": "string"
+    },
+    "amountOutMin": {
+      "type": "string"
+    },
+    "amountOutActual": {
+      "type": "string"
+    },
+    "slippageBps": {
+      "type": "integer"
+    },
+    "routeTokens": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "encodedPath": {
+      "type": "string"
+    },
+    "walletAddress": {
+      "$ref": "#/$defs/EvmAddress"
+    },
+    "txHash": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string",
+      "enum": [
+        "initiated",
+        "completed",
+        "failed",
+        "unknown"
+      ]
+    },
+    "failureReason": {
+      "type": "string"
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  },
+  "$defs": {
+    "EvmAddress": {
+      "type": "string",
+      "pattern": "^0x[a-fA-F0-9]{40}$"
+    }
+  }
+}
