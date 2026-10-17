@@ -1,0 +1,344 @@
+openapi: 3.2.0
+info:
+  title: Overledger Server API Keys API
+  description: The Overledger Server is the primary client-facing gateway.
+  version: 1.0.0
+servers:
+- url: https://fusion-rollup.quant.dev
+  description: Testnet (live) — the public Fusion Server endpoint
+- url: http://localhost:8080
+  description: Local development
+security:
+- bearerAuth: []
+- apiKeyAuth: []
+tags:
+- name: API Keys
+  description: Self-service management of Overledger-issued API keys
+paths:
+  /users/me/api-keys:
+    post:
+      tags:
+      - API Keys
+      operationId: mintApiKey
+      summary: Mint a new API key for the authenticated user
+      description: 'Mints an Overledger-issued API key. The response carries the raw key
+
+        ONCE in the `apiKey` field — it is unrecoverable afterwards. This route
+
+        accepts header-token auth only (a URL/header API key can never mint,
+
+        list, or revoke keys).'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateApiKeyRequest'
+      responses:
+        '201':
+          description: Key minted — `apiKey` shown once.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MintedApiKey'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+    get:
+      tags:
+      - API Keys
+      operationId: listApiKeys
+      summary: List the authenticated user's API keys
+      description: Returns the caller's key metadata. Secrets are never included.
+      responses:
+        '200':
+          description: The caller's API keys.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - data
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/ApiKeySummary'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /users/me/api-keys/{keyId}:
+    delete:
+      tags:
+      - API Keys
+      operationId: revokeApiKey
+      summary: Revoke one of the authenticated user's API keys
+      parameters:
+      - name: keyId
+        in: path
+        required: true
+        description: The public key handle (first segment of the raw key).
+        schema:
+          type: string
+          minLength: 1
+      responses:
+        '200':
+          description: Key revoked — returns the revoked key's summary.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiKeySummary'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  schemas:
+    CreateApiKeyRequest:
+      type: object
+      required:
+      - label
+      properties:
+        label:
+          type: string
+          minLength: 1
+          maxLength: 100
+          description: Human-readable name for the key, e.g. "CI key".
+          example: CI key
+        scopes:
+          type: array
+          maxItems: 10
+          items:
+            $ref: '#/components/schemas/ApiKeyScope'
+          description: Scopes to grant. Defaults to `["rpc"]` when omitted.
+          default:
+          - rpc
+        expiresAt:
+          type: string
+          format: date-time
+          description: Optional ISO-8601 expiry. Must be in the future; absent = no expiry.
+    StandardError:
+      type: object
+      required:
+      - timestamp
+      - status
+      - error
+      - message
+      - path
+      properties:
+        timestamp:
+          type: integer
+          description: Milliseconds since epoch
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+      example:
+        timestamp: 1709737845000
+        status: 400
+        error: Bad request
+        message: Validation failed
+        path: /users/me/deposits
+    ApiKeyScope:
+      type: string
+      description: A capability granted to an API key. Currently only `rpc` (full JSON-RPC access).
+      enum:
+      - rpc
+      example: rpc
+    ApiKeySummary:
+      type: object
+      description: A key's metadata — never includes the secret.
+      required:
+      - keyId
+      - label
+      - scopes
+      - createdAt
+      properties:
+        keyId:
+          type: string
+          description: Public lookup handle — the first segment of the raw key.
+        label:
+          type: string
+        scopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiKeyScope'
+        createdAt:
+          type: string
+          format: date-time
+        lastUsedAt:
+          type: string
+          format: date-time
+          description: Timestamp of the last successful verification (throttled writes).
+        expiresAt:
+          type: string
+          format: date-time
+        revokedAt:
+          type: string
+          format: date-time
+    MintedApiKey:
+      type: object
+      description: 'The result of minting a key. The `apiKey` field carries the full raw key
+
+        (`fk_<keyId>.<secret>`) and is returned ONCE — it is unrecoverable
+
+        afterwards.
+
+        '
+      required:
+      - apiKey
+      - keyId
+      - label
+      - scopes
+      - createdAt
+      properties:
+        apiKey:
+          type: string
+          description: The full raw key — shown only once at creation.
+          example: fk_abc123def456.s3cr3tValue...
+        keyId:
+          type: string
+        label:
+          type: string
+        scopes:
+          type: array
+          items:
+            $ref: '#/components/schemas/ApiKeyScope'
+        createdAt:
+          type: string
+          format: date-time
+        lastUsedAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StandardError'
+    Unauthorized:
+      description: Unauthorized — missing or invalid credentials
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StandardError'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StandardError'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'A Keycloak access token (JWT), verified against the realm JWKS
+
+        (signature / issuer / expiry). The caller''s identity is the token''s
+
+        `sub` claim — this is **not** a `clientId`.
+
+        '
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: 'An Overledger-issued API key of the form `fk_<keyId>.<secret>`, minted via
+
+        `POST /users/me/api-keys`. Accepted on any route and **takes precedence**
+
+        over the `Authorization` header when both are supplied. Resolves to the
+
+        same identity (Keycloak `sub`) as the equivalent Bearer JWT.
+
+        '
+x-provenance:
+  method: searched
+  source: https://docs.overledger.dev/reference
+  harvested: '2026-10-14'
+  tool: harvest-readme-openapi.py
+  note: Assembled verbatim from the OpenAPI definition ReadMe embeds in each operation page of the provider's developer portal; paths and components merged by API title, nothing authored.
+  assembled_from:
+  - https://docs.overledger.dev/reference/checkdepositstatus.md
+  - https://docs.overledger.dev/reference/checkswapstatus.md
+  - https://docs.overledger.dev/reference/checkwithdrawalstatus.md
+  - https://docs.overledger.dev/reference/createdeposit.md
+  - https://docs.overledger.dev/reference/createsession.md
+  - https://docs.overledger.dev/reference/createsubscription.md
+  - https://docs.overledger.dev/reference/createswap.md
+  - https://docs.overledger.dev/reference/createwithdrawal.md
+  - https://docs.overledger.dev/reference/delete_deployed-contracts-contractaddress-permissions.md
+  - https://docs.overledger.dev/reference/delete_nodes-nodeid.md
+  - https://docs.overledger.dev/reference/deletesubscription.md
+  - https://docs.overledger.dev/reference/get_deployed-contracts-contractaddress-permissions.md
+  - https://docs.overledger.dev/reference/get_deployed-contracts-contractaddress.md
+  - https://docs.overledger.dev/reference/get_health.md
+  - https://docs.overledger.dev/reference/get_metrics.md
+  - https://docs.overledger.dev/reference/get_networks-fusion.md
+  - https://docs.overledger.dev/reference/get_networks-total.md
+  - https://docs.overledger.dev/reference/get_networks.md
+  - https://docs.overledger.dev/reference/get_ready.md
+  - https://docs.overledger.dev/reference/get_stakes-address.md
+  - https://docs.overledger.dev/reference/get_users-me-access-details.md
+  - https://docs.overledger.dev/reference/get_users-me-deployed-contracts.md
+  - https://docs.overledger.dev/reference/get_users-me-id.md
+  - https://docs.overledger.dev/reference/get_users-me-nodes.md
+  - https://docs.overledger.dev/reference/get_users-me-providers.md
+  - https://docs.overledger.dev/reference/get_users-me-stakes-total.md
+  - https://docs.overledger.dev/reference/get_users-me-stakes.md
+  - https://docs.overledger.dev/reference/get_users-me-transactions.md
+  - https://docs.overledger.dev/reference/getactionablewithdrawals.md
+  - https://docs.overledger.dev/reference/getallowedcomponents.md
+  - https://docs.overledger.dev/reference/getapp.md
+  - https://docs.overledger.dev/reference/getdeposit.md
+  - https://docs.overledger.dev/reference/getdepositallowance.md
+  - https://docs.overledger.dev/reference/getdepositbalances.md
+  - https://docs.overledger.dev/reference/getsession.md
+  - https://docs.overledger.dev/reference/getstep.md
+  - https://docs.overledger.dev/reference/getsupportedswaptokens.md
+  - https://docs.overledger.dev/reference/getswap.md
+  - https://docs.overledger.dev/reference/getswapquote.md
+  - https://docs.overledger.dev/reference/gettransactionstatus.md
+  - https://docs.overledger.dev/reference/getuserhistory.md
+  - https://docs.overledger.dev/reference/getuserswaps.md
+  - https://docs.overledger.dev/reference/getuserwithdrawals.md
+  - https://docs.overledger.dev/reference/getwithdrawalbyid.md
+  - https://docs.overledger.dev/reference/listaddressevents.md
+  - https://docs.overledger.dev/reference/listapikeys.md
+  - https://docs.overledger.dev/reference/listapps.md
+  - https://docs.overledger.dev/reference/listeventsubscriptionevents.md
+  - https://docs.overledger.dev/reference/listsessions.md
+  - https://docs.overledger.dev/reference/listsubscriptions.md
+  - https://docs.overledger.dev/reference/listuserdeposits.md
+  - https://docs.overledger.dev/reference/mintapikey.md
+  - https://docs.overledger.dev/reference/post_deployed-contracts-contractaddress-permissions.md
+  - https://docs.overledger.dev/reference/post_nodes.md
+  - https://docs.overledger.dev/reference/post_rpc-apikey.md
+  - https://docs.overledger.dev/reference/post_stakes.md
+  - https://docs.overledger.dev/reference/post_users-me-providers-providerid-reactivate.md
+  - https://docs.overledger.dev/reference/put_deployed-contracts-contractaddress.md
+  - https://docs.overledger.dev/reference/put_users-me-providers-providerid-reset-policy.md
+  - https://docs.overledger.dev/reference/queryappstate.md
+  - https://docs.overledger.dev/reference/recordfinalizetx.md
+  - https://docs.overledger.dev/reference/recordprovetx.md
+  - https://docs.overledger.dev/reference/replayevents.md
+  - https://docs.overledger.dev/reference/revokeapikey.md
+  - https://docs.overledger.dev/reference/submitstep.md
+  - https://docs.overledger.dev/reference/subscribeaddress.md
+  - https://docs.overledger.dev/reference/subscribeevent.md
+  - https://docs.overledger.dev/reference/tracktransaction.md
+  - https://docs.overledger.dev/reference/unsubscribeaddress.md
+  - https://docs.overledger.dev/reference/unsubscribeevent.md
+  merge:
+    pages: 70
+    deduped: 480
+    conflicts_kept_first: 0

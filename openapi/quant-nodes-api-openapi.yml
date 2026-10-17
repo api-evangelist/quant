@@ -1,0 +1,277 @@
+openapi: 3.2.0
+info:
+  title: Overledger Server Nodes API
+  description: The Overledger Server is the primary client-facing gateway.
+  version: 1.0.0
+servers:
+- url: https://fusion-rollup.quant.dev
+  description: Testnet (live) — the public Fusion Server endpoint
+- url: http://localhost:8080
+  description: Local development
+security:
+- bearerAuth: []
+- apiKeyAuth: []
+tags:
+- name: Nodes
+  description: DLT node management
+paths:
+  /nodes:
+    post:
+      tags:
+      - Nodes
+      summary: Register a new DLT node
+      description: URL must be from an approved provider domain (for a public node).
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddNodeRequest'
+      responses:
+        '201':
+          description: Node registered
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Node'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+      operationId: postNodes
+      x-operation-id-source: derived
+  /nodes/{nodeId}:
+    delete:
+      tags:
+      - Nodes
+      summary: Remove a registered node
+      parameters:
+      - name: nodeId
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Node removed
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+      operationId: deleteNodesByNodeId
+      x-operation-id-source: derived
+components:
+  schemas:
+    DltType:
+      type: string
+      enum:
+      - EVM
+      - HEDERA
+      - SOLANA
+      - SUI
+      - APTOS
+      - COSMOS
+    AddNodeRequest:
+      type: object
+      required:
+      - address
+      - dlt
+      properties:
+        address:
+          type: string
+          format: uri
+          description: 'Node RPC URL from an approved provider domain (alchemy.com, infura.io,
+
+            quiknode.pro, chainstack.com, getblock.io, blockdaemon.com, ankr.com,
+
+            drpc.live). Must include an API key in the path.
+
+            '
+        network:
+          type: string
+        name:
+          type: string
+        dlt:
+          $ref: '#/components/schemas/DltType'
+    StandardError:
+      type: object
+      required:
+      - timestamp
+      - status
+      - error
+      - message
+      - path
+      properties:
+        timestamp:
+          type: integer
+          description: Milliseconds since epoch
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+      example:
+        timestamp: 1709737845000
+        status: 400
+        error: Bad request
+        message: Validation failed
+        path: /users/me/deposits
+    Node:
+      type: object
+      required:
+      - _id
+      - userId
+      - address
+      - dlt
+      - createdAt
+      - updatedAt
+      properties:
+        _id:
+          type: string
+        userId:
+          type: string
+        address:
+          type: string
+          format: uri
+        network:
+          type: string
+        name:
+          type: string
+        dlt:
+          $ref: '#/components/schemas/DltType'
+        networkId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StandardError'
+    Unauthorized:
+      description: Unauthorized — missing or invalid credentials
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StandardError'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StandardError'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'A Keycloak access token (JWT), verified against the realm JWKS
+
+        (signature / issuer / expiry). The caller''s identity is the token''s
+
+        `sub` claim — this is **not** a `clientId`.
+
+        '
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: 'An Overledger-issued API key of the form `fk_<keyId>.<secret>`, minted via
+
+        `POST /users/me/api-keys`. Accepted on any route and **takes precedence**
+
+        over the `Authorization` header when both are supplied. Resolves to the
+
+        same identity (Keycloak `sub`) as the equivalent Bearer JWT.
+
+        '
+x-provenance:
+  method: searched
+  source: https://docs.overledger.dev/reference
+  harvested: '2026-10-14'
+  tool: harvest-readme-openapi.py
+  note: Assembled verbatim from the OpenAPI definition ReadMe embeds in each operation page of the provider's developer portal; paths and components merged by API title, nothing authored.
+  assembled_from:
+  - https://docs.overledger.dev/reference/checkdepositstatus.md
+  - https://docs.overledger.dev/reference/checkswapstatus.md
+  - https://docs.overledger.dev/reference/checkwithdrawalstatus.md
+  - https://docs.overledger.dev/reference/createdeposit.md
+  - https://docs.overledger.dev/reference/createsession.md
+  - https://docs.overledger.dev/reference/createsubscription.md
+  - https://docs.overledger.dev/reference/createswap.md
+  - https://docs.overledger.dev/reference/createwithdrawal.md
+  - https://docs.overledger.dev/reference/delete_deployed-contracts-contractaddress-permissions.md
+  - https://docs.overledger.dev/reference/delete_nodes-nodeid.md
+  - https://docs.overledger.dev/reference/deletesubscription.md
+  - https://docs.overledger.dev/reference/get_deployed-contracts-contractaddress-permissions.md
+  - https://docs.overledger.dev/reference/get_deployed-contracts-contractaddress.md
+  - https://docs.overledger.dev/reference/get_health.md
+  - https://docs.overledger.dev/reference/get_metrics.md
+  - https://docs.overledger.dev/reference/get_networks-fusion.md
+  - https://docs.overledger.dev/reference/get_networks-total.md
+  - https://docs.overledger.dev/reference/get_networks.md
+  - https://docs.overledger.dev/reference/get_ready.md
+  - https://docs.overledger.dev/reference/get_stakes-address.md
+  - https://docs.overledger.dev/reference/get_users-me-access-details.md
+  - https://docs.overledger.dev/reference/get_users-me-deployed-contracts.md
+  - https://docs.overledger.dev/reference/get_users-me-id.md
+  - https://docs.overledger.dev/reference/get_users-me-nodes.md
+  - https://docs.overledger.dev/reference/get_users-me-providers.md
+  - https://docs.overledger.dev/reference/get_users-me-stakes-total.md
+  - https://docs.overledger.dev/reference/get_users-me-stakes.md
+  - https://docs.overledger.dev/reference/get_users-me-transactions.md
+  - https://docs.overledger.dev/reference/getactionablewithdrawals.md
+  - https://docs.overledger.dev/reference/getallowedcomponents.md
+  - https://docs.overledger.dev/reference/getapp.md
+  - https://docs.overledger.dev/reference/getdeposit.md
+  - https://docs.overledger.dev/reference/getdepositallowance.md
+  - https://docs.overledger.dev/reference/getdepositbalances.md
+  - https://docs.overledger.dev/reference/getsession.md
+  - https://docs.overledger.dev/reference/getstep.md
+  - https://docs.overledger.dev/reference/getsupportedswaptokens.md
+  - https://docs.overledger.dev/reference/getswap.md
+  - https://docs.overledger.dev/reference/getswapquote.md
+  - https://docs.overledger.dev/reference/gettransactionstatus.md
+  - https://docs.overledger.dev/reference/getuserhistory.md
+  - https://docs.overledger.dev/reference/getuserswaps.md
+  - https://docs.overledger.dev/reference/getuserwithdrawals.md
+  - https://docs.overledger.dev/reference/getwithdrawalbyid.md
+  - https://docs.overledger.dev/reference/listaddressevents.md
+  - https://docs.overledger.dev/reference/listapikeys.md
+  - https://docs.overledger.dev/reference/listapps.md
+  - https://docs.overledger.dev/reference/listeventsubscriptionevents.md
+  - https://docs.overledger.dev/reference/listsessions.md
+  - https://docs.overledger.dev/reference/listsubscriptions.md
+  - https://docs.overledger.dev/reference/listuserdeposits.md
+  - https://docs.overledger.dev/reference/mintapikey.md
+  - https://docs.overledger.dev/reference/post_deployed-contracts-contractaddress-permissions.md
+  - https://docs.overledger.dev/reference/post_nodes.md
+  - https://docs.overledger.dev/reference/post_rpc-apikey.md
+  - https://docs.overledger.dev/reference/post_stakes.md
+  - https://docs.overledger.dev/reference/post_users-me-providers-providerid-reactivate.md
+  - https://docs.overledger.dev/reference/put_deployed-contracts-contractaddress.md
+  - https://docs.overledger.dev/reference/put_users-me-providers-providerid-reset-policy.md
+  - https://docs.overledger.dev/reference/queryappstate.md
+  - https://docs.overledger.dev/reference/recordfinalizetx.md
+  - https://docs.overledger.dev/reference/recordprovetx.md
+  - https://docs.overledger.dev/reference/replayevents.md
+  - https://docs.overledger.dev/reference/revokeapikey.md
+  - https://docs.overledger.dev/reference/submitstep.md
+  - https://docs.overledger.dev/reference/subscribeaddress.md
+  - https://docs.overledger.dev/reference/subscribeevent.md
+  - https://docs.overledger.dev/reference/tracktransaction.md
+  - https://docs.overledger.dev/reference/unsubscribeaddress.md
+  - https://docs.overledger.dev/reference/unsubscribeevent.md
+  merge:
+    pages: 70
+    deduped: 480
+    conflicts_kept_first: 0

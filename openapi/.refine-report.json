@@ -1,0 +1,38 @@
+{
+  "provider": "quant",
+  "sources": [
+    "quant-overledger-server-openapi.yml"
+  ],
+  "outputs": [
+    "quant-api-keys-api-openapi.yml",
+    "quant-contracts-api-openapi.yml",
+    "quant-deposits-api-openapi.yml",
+    "quant-flow-query-api-openapi.yml",
+    "quant-flow-registry-api-openapi.yml",
+    "quant-flow-sessions-api-openapi.yml",
+    "quant-flow-webhooks-api-openapi.yml",
+    "quant-health-api-openapi.yml",
+    "quant-networks-api-openapi.yml",
+    "quant-nodes-api-openapi.yml",
+    "quant-observability-api-openapi.yml",
+    "quant-rpc-api-openapi.yml",
+    "quant-stakes-api-openapi.yml",
+    "quant-swaps-api-openapi.yml",
+    "quant-tracker-address-api-openapi.yml",
+    "quant-tracker-event-api-openapi.yml",
+    "quant-tracker-transaction-api-openapi.yml",
+    "quant-user-api-openapi.yml",
+    "quant-withdrawals-api-openapi.yml"
+  ],
+  "archived": [
+    "archived openapi/quant-overledger-server-openapi.yml"
+  ],
+  "errors": [],
+  "warnings": [],
+  "notes": [
+    "sourced from openapi/_original/ (0 archived document(s)); previously refined output at the top level was skipped rather than re-split",
+    "quant-overledger-server-openapi.yml: upgraded openapi 3.0.3 -> OpenAPI 3.2.0",
+    "apis.yml register: written (+19 apis, 19 total)"
+  ],
+  "skipped": []
+}

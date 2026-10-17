@@ -1,0 +1,297 @@
+openapi: 3.2.0
+info:
+  title: Overledger Server RPC API
+  description: The Overledger Server is the primary client-facing gateway.
+  version: 1.0.0
+servers:
+- url: https://fusion-rollup.quant.dev
+  description: Testnet (live) — the public Fusion Server endpoint
+- url: http://localhost:8080
+  description: Local development
+security:
+- bearerAuth: []
+- apiKeyAuth: []
+tags:
+- name: RPC
+  description: JSON-RPC proxy to the Fusion L2 (OP-Geth) **only**. For JSON-RPC against any other connected chain, use the Fusion Proxy's multi-DLT endpoint `/dlts/{dlt}/networks/{networkId}/rpc/{apiKey}` (see the fusion-proxy spec).
+paths:
+  /rpc/{apiKey}:
+    post:
+      tags:
+      - RPC
+      summary: Fusion L2 JSON-RPC
+      description: 'Proxies a JSON-RPC 2.0 request to the Fusion L2 OP-Geth node.
+
+        This route is for the Fusion L2 only. Only Fusion L2 methods are supported —
+
+        JSON-RPC for any other connected chain must go to the Fusion Proxy''s multi-DLT
+
+        endpoint `/dlts/{dlt}/networks/{networkId}/rpc/{apiKey}` (see the fusion-proxy spec).
+
+
+        Authentication is accepted via the Overledger-issued API key as the
+
+        `{apiKey}` path segment, the `X-API-Key` header, or an
+
+        `Authorization: Bearer ` Keycloak token. The `X-API-Key` header
+
+        takes precedence over the others when present.'
+      security:
+      - apiKeyAuth: []
+      - bearerAuth: []
+      parameters:
+      - name: apiKey
+        in: path
+        required: true
+        description: 'An Overledger-issued API key (`fk_<keyId>.<secret>`) used to
+
+          authenticate the request.
+
+          '
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/JsonRpcRequest'
+            examples:
+              blockNumber:
+                summary: Get latest block number
+                value:
+                  jsonrpc: '2.0'
+                  method: eth_blockNumber
+                  id: 1
+                  params: []
+              getBalance:
+                summary: Get ETH balance
+                value:
+                  jsonrpc: '2.0'
+                  method: eth_getBalance
+                  id: 2
+                  params:
+                  - '0xAbCd1234AbCd1234AbCd1234AbCd1234AbCd1234'
+                  - latest
+      responses:
+        '200':
+          description: JSON-RPC response (success or RPC-level error)
+          content:
+            application/json:
+              schema:
+                oneOf:
+                - $ref: '#/components/schemas/JsonRpcResponse'
+                - $ref: '#/components/schemas/JsonRpcError'
+        '401':
+          description: Missing credentials (JSON-RPC error code `-32000`)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JsonRpcError'
+        '403':
+          description: Invalid credentials (JSON-RPC error code `-32001`)
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JsonRpcError'
+        '503':
+          description: OP-Geth node unavailable
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/JsonRpcError'
+      operationId: postRpcByApiKey
+      x-operation-id-source: derived
+components:
+  schemas:
+    JsonRpcResponse:
+      type: object
+      required:
+      - jsonrpc
+      - id
+      - result
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+          - '2.0'
+        id:
+          oneOf:
+          - type:
+            - string
+            - 'null'
+          - type:
+            - integer
+            - 'null'
+        result: {}
+    JsonRpcError:
+      type: object
+      required:
+      - jsonrpc
+      - id
+      - error
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+          - '2.0'
+        id:
+          oneOf:
+          - type:
+            - string
+            - 'null'
+          - type:
+            - integer
+            - 'null'
+        error:
+          type: object
+          required:
+          - code
+          - message
+          properties:
+            code:
+              type: integer
+              description: 'Auth-related JSON-RPC error codes returned by `/rpc/{apiKey}`:
+
+                - `-32000`: "Missing credentials." (HTTP 401)
+
+                - `-32001`: "Invalid credentials." (HTTP 403)
+
+                - `-32002`: "Internal server error." (HTTP 500)
+
+                '
+            message:
+              type: string
+    JsonRpcRequest:
+      type: object
+      required:
+      - jsonrpc
+      - method
+      - id
+      properties:
+        jsonrpc:
+          type: string
+          enum:
+          - '2.0'
+        method:
+          type: string
+          example: eth_blockNumber
+        id:
+          oneOf:
+          - type:
+            - string
+            - 'null'
+          - type:
+            - integer
+            - 'null'
+          example: 1
+        params:
+          type: array
+          items: {}
+          example: []
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'A Keycloak access token (JWT), verified against the realm JWKS
+
+        (signature / issuer / expiry). The caller''s identity is the token''s
+
+        `sub` claim — this is **not** a `clientId`.
+
+        '
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: 'An Overledger-issued API key of the form `fk_<keyId>.<secret>`, minted via
+
+        `POST /users/me/api-keys`. Accepted on any route and **takes precedence**
+
+        over the `Authorization` header when both are supplied. Resolves to the
+
+        same identity (Keycloak `sub`) as the equivalent Bearer JWT.
+
+        '
+x-provenance:
+  method: searched
+  source: https://docs.overledger.dev/reference
+  harvested: '2026-10-14'
+  tool: harvest-readme-openapi.py
+  note: Assembled verbatim from the OpenAPI definition ReadMe embeds in each operation page of the provider's developer portal; paths and components merged by API title, nothing authored.
+  assembled_from:
+  - https://docs.overledger.dev/reference/checkdepositstatus.md
+  - https://docs.overledger.dev/reference/checkswapstatus.md
+  - https://docs.overledger.dev/reference/checkwithdrawalstatus.md
+  - https://docs.overledger.dev/reference/createdeposit.md
+  - https://docs.overledger.dev/reference/createsession.md
+  - https://docs.overledger.dev/reference/createsubscription.md
+  - https://docs.overledger.dev/reference/createswap.md
+  - https://docs.overledger.dev/reference/createwithdrawal.md
+  - https://docs.overledger.dev/reference/delete_deployed-contracts-contractaddress-permissions.md
+  - https://docs.overledger.dev/reference/delete_nodes-nodeid.md
+  - https://docs.overledger.dev/reference/deletesubscription.md
+  - https://docs.overledger.dev/reference/get_deployed-contracts-contractaddress-permissions.md
+  - https://docs.overledger.dev/reference/get_deployed-contracts-contractaddress.md
+  - https://docs.overledger.dev/reference/get_health.md
+  - https://docs.overledger.dev/reference/get_metrics.md
+  - https://docs.overledger.dev/reference/get_networks-fusion.md
+  - https://docs.overledger.dev/reference/get_networks-total.md
+  - https://docs.overledger.dev/reference/get_networks.md
+  - https://docs.overledger.dev/reference/get_ready.md
+  - https://docs.overledger.dev/reference/get_stakes-address.md
+  - https://docs.overledger.dev/reference/get_users-me-access-details.md
+  - https://docs.overledger.dev/reference/get_users-me-deployed-contracts.md
+  - https://docs.overledger.dev/reference/get_users-me-id.md
+  - https://docs.overledger.dev/reference/get_users-me-nodes.md
+  - https://docs.overledger.dev/reference/get_users-me-providers.md
+  - https://docs.overledger.dev/reference/get_users-me-stakes-total.md
+  - https://docs.overledger.dev/reference/get_users-me-stakes.md
+  - https://docs.overledger.dev/reference/get_users-me-transactions.md
+  - https://docs.overledger.dev/reference/getactionablewithdrawals.md
+  - https://docs.overledger.dev/reference/getallowedcomponents.md
+  - https://docs.overledger.dev/reference/getapp.md
+  - https://docs.overledger.dev/reference/getdeposit.md
+  - https://docs.overledger.dev/reference/getdepositallowance.md
+  - https://docs.overledger.dev/reference/getdepositbalances.md
+  - https://docs.overledger.dev/reference/getsession.md
+  - https://docs.overledger.dev/reference/getstep.md
+  - https://docs.overledger.dev/reference/getsupportedswaptokens.md
+  - https://docs.overledger.dev/reference/getswap.md
+  - https://docs.overledger.dev/reference/getswapquote.md
+  - https://docs.overledger.dev/reference/gettransactionstatus.md
+  - https://docs.overledger.dev/reference/getuserhistory.md
+  - https://docs.overledger.dev/reference/getuserswaps.md
+  - https://docs.overledger.dev/reference/getuserwithdrawals.md
+  - https://docs.overledger.dev/reference/getwithdrawalbyid.md
+  - https://docs.overledger.dev/reference/listaddressevents.md
+  - https://docs.overledger.dev/reference/listapikeys.md
+  - https://docs.overledger.dev/reference/listapps.md
+  - https://docs.overledger.dev/reference/listeventsubscriptionevents.md
+  - https://docs.overledger.dev/reference/listsessions.md
+  - https://docs.overledger.dev/reference/listsubscriptions.md
+  - https://docs.overledger.dev/reference/listuserdeposits.md
+  - https://docs.overledger.dev/reference/mintapikey.md
+  - https://docs.overledger.dev/reference/post_deployed-contracts-contractaddress-permissions.md
+  - https://docs.overledger.dev/reference/post_nodes.md
+  - https://docs.overledger.dev/reference/post_rpc-apikey.md
+  - https://docs.overledger.dev/reference/post_stakes.md
+  - https://docs.overledger.dev/reference/post_users-me-providers-providerid-reactivate.md
+  - https://docs.overledger.dev/reference/put_deployed-contracts-contractaddress.md
+  - https://docs.overledger.dev/reference/put_users-me-providers-providerid-reset-policy.md
+  - https://docs.overledger.dev/reference/queryappstate.md
+  - https://docs.overledger.dev/reference/recordfinalizetx.md
+  - https://docs.overledger.dev/reference/recordprovetx.md
+  - https://docs.overledger.dev/reference/replayevents.md
+  - https://docs.overledger.dev/reference/revokeapikey.md
+  - https://docs.overledger.dev/reference/submitstep.md
+  - https://docs.overledger.dev/reference/subscribeaddress.md
+  - https://docs.overledger.dev/reference/subscribeevent.md
+  - https://docs.overledger.dev/reference/tracktransaction.md
+  - https://docs.overledger.dev/reference/unsubscribeaddress.md
+  - https://docs.overledger.dev/reference/unsubscribeevent.md
+  merge:
+    pages: 70
+    deduped: 480
+    conflicts_kept_first: 0

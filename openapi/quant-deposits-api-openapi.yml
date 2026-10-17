@@ -1,0 +1,496 @@
+openapi: 3.2.0
+info:
+  title: Overledger Server Deposits API
+  description: The Overledger Server is the primary client-facing gateway.
+  version: 1.0.0
+servers:
+- url: https://fusion-rollup.quant.dev
+  description: Testnet (live) — the public Fusion Server endpoint
+- url: http://localhost:8080
+  description: Local development
+security:
+- bearerAuth: []
+- apiKeyAuth: []
+tags:
+- name: Deposits
+  description: Token deposit management
+paths:
+  /deposits:
+    post:
+      tags:
+      - Deposits
+      operationId: createDeposit
+      summary: Create a deposit record
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateDepositRequest'
+      responses:
+        '201':
+          description: Deposit created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deposit'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /deposits/allowance:
+    get:
+      tags:
+      - Deposits
+      operationId: getDepositAllowance
+      summary: Get token deposit allowances for a wallet
+      parameters:
+      - name: walletAddress
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/EvmAddress'
+      - name: token
+        in: query
+        required: true
+        schema:
+          type: string
+      - name: network
+        in: query
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Allowance result
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - walletAddress
+                - token
+                - network
+                - allowance
+                properties:
+                  walletAddress:
+                    $ref: '#/components/schemas/EvmAddress'
+                  token:
+                    type: string
+                  network:
+                    type: string
+                  allowance:
+                    type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /deposits/balances:
+    get:
+      tags:
+      - Deposits
+      operationId: getDepositBalances
+      summary: Get token deposit balances for a wallet
+      parameters:
+      - name: walletAddress
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/EvmAddress'
+      responses:
+        '200':
+          description: Balances per token
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - walletAddress
+                - balances
+                properties:
+                  walletAddress:
+                    $ref: '#/components/schemas/EvmAddress'
+                  balances:
+                    type: array
+                    items:
+                      type: object
+                      required:
+                      - token
+                      - balance
+                      - decimals
+                      properties:
+                        token:
+                          type: string
+                        balance:
+                          type: string
+                        decimals:
+                          type: integer
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /deposits/{id}:
+    get:
+      tags:
+      - Deposits
+      operationId: getDeposit
+      summary: Get a deposit by ID
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Deposit detail
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Deposit'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /deposits/{id}/status:
+    get:
+      tags:
+      - Deposits
+      operationId: checkDepositStatus
+      summary: Refresh + return a deposit's on-chain status
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Latest status snapshot
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - id
+                - status
+                - lastStatusCheckAt
+                properties:
+                  id:
+                    type: string
+                  status:
+                    type: string
+                    enum:
+                    - initiated
+                    - l1_pending
+                    - l1_confirmed
+                    - l2_confirmed
+                    - failed
+                    - unknown
+                  txHash:
+                    type: string
+                  lastStatusCheckAt:
+                    type: string
+                    format: date-time
+                  failureReason:
+                    type: string
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /users/me/deposits:
+    get:
+      tags:
+      - Deposits
+      operationId: listUserDeposits
+      summary: List the authenticated user's deposits onto the Fusion Rollup
+      parameters:
+      - $ref: '#/components/parameters/pageParam'
+      - $ref: '#/components/parameters/pageSizeParam'
+      responses:
+        '200':
+          description: Paginated deposits
+          content:
+            application/json:
+              schema:
+                allOf:
+                - $ref: '#/components/schemas/PaginatedMeta'
+                - type: object
+                  properties:
+                    data:
+                      type: array
+                      items:
+                        $ref: '#/components/schemas/Deposit'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+components:
+  schemas:
+    Deposit:
+      type: object
+      required:
+      - id
+      - fromNetwork
+      - token
+      - amount
+      - fromAddress
+      - toAddress
+      - status
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+        fromNetwork:
+          $ref: '#/components/schemas/L1Network'
+        token:
+          $ref: '#/components/schemas/TokenSymbol'
+        amount:
+          type: string
+        fromAddress:
+          $ref: '#/components/schemas/EvmAddress'
+        toAddress:
+          $ref: '#/components/schemas/EvmAddress'
+        txHash:
+          $ref: '#/components/schemas/TxHash'
+        approvalTxHash:
+          $ref: '#/components/schemas/TxHash'
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    CreateDepositRequest:
+      type: object
+      required:
+      - fromNetwork
+      - token
+      - amount
+      - fromAddress
+      - toAddress
+      properties:
+        fromNetwork:
+          $ref: '#/components/schemas/L1Network'
+        token:
+          $ref: '#/components/schemas/TokenSymbol'
+        amount:
+          type: string
+          description: Positive number as string
+          example: '100.00'
+        fromAddress:
+          $ref: '#/components/schemas/EvmAddress'
+        toAddress:
+          $ref: '#/components/schemas/EvmAddress'
+        txHash:
+          $ref: '#/components/schemas/TxHash'
+        approvalTxHash:
+          $ref: '#/components/schemas/TxHash'
+    EvmAddress:
+      type: string
+      pattern: ^0x[a-fA-F0-9]{40}$
+      example: '0xAbCd1234AbCd1234AbCd1234AbCd1234AbCd1234'
+    PaginatedMeta:
+      type: object
+      required:
+      - total
+      - page
+      - pageSize
+      properties:
+        total:
+          type: integer
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        hasMore:
+          type: boolean
+    StandardError:
+      type: object
+      required:
+      - timestamp
+      - status
+      - error
+      - message
+      - path
+      properties:
+        timestamp:
+          type: integer
+          description: Milliseconds since epoch
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+      example:
+        timestamp: 1709737845000
+        status: 400
+        error: Bad request
+        message: Validation failed
+        path: /users/me/deposits
+    L1Network:
+      type: string
+      enum:
+      - ETH_MAINNET
+      - SEPOLIA
+      - OPTIMISM
+      - OPTIMISM_SEPOLIA
+      - ARBITRUM_ONE
+      - ARBITRUM_SEPOLIA
+    TxHash:
+      type: string
+      pattern: ^0x[a-fA-F0-9]{64}$
+      example: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890ab'
+    TokenSymbol:
+      type: string
+      enum:
+      - USDT
+      - USDC
+      - DAI
+      - WETH
+      - WBTC
+      description: Supported bridge tokens (non-exhaustive)
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StandardError'
+    Unauthorized:
+      description: Unauthorized — missing or invalid credentials
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StandardError'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StandardError'
+  parameters:
+    pageSizeParam:
+      name: pageSize
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 10
+    pageParam:
+      name: page
+      in: query
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'A Keycloak access token (JWT), verified against the realm JWKS
+
+        (signature / issuer / expiry). The caller''s identity is the token''s
+
+        `sub` claim — this is **not** a `clientId`.
+
+        '
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: 'An Overledger-issued API key of the form `fk_<keyId>.<secret>`, minted via
+
+        `POST /users/me/api-keys`. Accepted on any route and **takes precedence**
+
+        over the `Authorization` header when both are supplied. Resolves to the
+
+        same identity (Keycloak `sub`) as the equivalent Bearer JWT.
+
+        '
+x-provenance:
+  method: searched
+  source: https://docs.overledger.dev/reference
+  harvested: '2026-10-14'
+  tool: harvest-readme-openapi.py
+  note: Assembled verbatim from the OpenAPI definition ReadMe embeds in each operation page of the provider's developer portal; paths and components merged by API title, nothing authored.
+  assembled_from:
+  - https://docs.overledger.dev/reference/checkdepositstatus.md
+  - https://docs.overledger.dev/reference/checkswapstatus.md
+  - https://docs.overledger.dev/reference/checkwithdrawalstatus.md
+  - https://docs.overledger.dev/reference/createdeposit.md
+  - https://docs.overledger.dev/reference/createsession.md
+  - https://docs.overledger.dev/reference/createsubscription.md
+  - https://docs.overledger.dev/reference/createswap.md
+  - https://docs.overledger.dev/reference/createwithdrawal.md
+  - https://docs.overledger.dev/reference/delete_deployed-contracts-contractaddress-permissions.md
+  - https://docs.overledger.dev/reference/delete_nodes-nodeid.md
+  - https://docs.overledger.dev/reference/deletesubscription.md
+  - https://docs.overledger.dev/reference/get_deployed-contracts-contractaddress-permissions.md
+  - https://docs.overledger.dev/reference/get_deployed-contracts-contractaddress.md
+  - https://docs.overledger.dev/reference/get_health.md
+  - https://docs.overledger.dev/reference/get_metrics.md
+  - https://docs.overledger.dev/reference/get_networks-fusion.md
+  - https://docs.overledger.dev/reference/get_networks-total.md
+  - https://docs.overledger.dev/reference/get_networks.md
+  - https://docs.overledger.dev/reference/get_ready.md
+  - https://docs.overledger.dev/reference/get_stakes-address.md
+  - https://docs.overledger.dev/reference/get_users-me-access-details.md
+  - https://docs.overledger.dev/reference/get_users-me-deployed-contracts.md
+  - https://docs.overledger.dev/reference/get_users-me-id.md
+  - https://docs.overledger.dev/reference/get_users-me-nodes.md
+  - https://docs.overledger.dev/reference/get_users-me-providers.md
+  - https://docs.overledger.dev/reference/get_users-me-stakes-total.md
+  - https://docs.overledger.dev/reference/get_users-me-stakes.md
+  - https://docs.overledger.dev/reference/get_users-me-transactions.md
+  - https://docs.overledger.dev/reference/getactionablewithdrawals.md
+  - https://docs.overledger.dev/reference/getallowedcomponents.md
+  - https://docs.overledger.dev/reference/getapp.md
+  - https://docs.overledger.dev/reference/getdeposit.md
+  - https://docs.overledger.dev/reference/getdepositallowance.md
+  - https://docs.overledger.dev/reference/getdepositbalances.md
+  - https://docs.overledger.dev/reference/getsession.md
+  - https://docs.overledger.dev/reference/getstep.md
+  - https://docs.overledger.dev/reference/getsupportedswaptokens.md
+  - https://docs.overledger.dev/reference/getswap.md
+  - https://docs.overledger.dev/reference/getswapquote.md
+  - https://docs.overledger.dev/reference/gettransactionstatus.md
+  - https://docs.overledger.dev/reference/getuserhistory.md
+  - https://docs.overledger.dev/reference/getuserswaps.md
+  - https://docs.overledger.dev/reference/getuserwithdrawals.md
+  - https://docs.overledger.dev/reference/getwithdrawalbyid.md
+  - https://docs.overledger.dev/reference/listaddressevents.md
+  - https://docs.overledger.dev/reference/listapikeys.md
+  - https://docs.overledger.dev/reference/listapps.md
+  - https://docs.overledger.dev/reference/listeventsubscriptionevents.md
+  - https://docs.overledger.dev/reference/listsessions.md
+  - https://docs.overledger.dev/reference/listsubscriptions.md
+  - https://docs.overledger.dev/reference/listuserdeposits.md
+  - https://docs.overledger.dev/reference/mintapikey.md
+  - https://docs.overledger.dev/reference/post_deployed-contracts-contractaddress-permissions.md
+  - https://docs.overledger.dev/reference/post_nodes.md
+  - https://docs.overledger.dev/reference/post_rpc-apikey.md
+  - https://docs.overledger.dev/reference/post_stakes.md
+  - https://docs.overledger.dev/reference/post_users-me-providers-providerid-reactivate.md
+  - https://docs.overledger.dev/reference/put_deployed-contracts-contractaddress.md
+  - https://docs.overledger.dev/reference/put_users-me-providers-providerid-reset-policy.md
+  - https://docs.overledger.dev/reference/queryappstate.md
+  - https://docs.overledger.dev/reference/recordfinalizetx.md
+  - https://docs.overledger.dev/reference/recordprovetx.md
+  - https://docs.overledger.dev/reference/replayevents.md
+  - https://docs.overledger.dev/reference/revokeapikey.md
+  - https://docs.overledger.dev/reference/submitstep.md
+  - https://docs.overledger.dev/reference/subscribeaddress.md
+  - https://docs.overledger.dev/reference/subscribeevent.md
+  - https://docs.overledger.dev/reference/tracktransaction.md
+  - https://docs.overledger.dev/reference/unsubscribeaddress.md
+  - https://docs.overledger.dev/reference/unsubscribeevent.md
+  merge:
+    pages: 70
+    deduped: 480
+    conflicts_kept_first: 0

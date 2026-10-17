@@ -1,0 +1,519 @@
+openapi: 3.2.0
+info:
+  title: Overledger Server Withdrawals API
+  description: The Overledger Server is the primary client-facing gateway.
+  version: 1.0.0
+servers:
+- url: https://fusion-rollup.quant.dev
+  description: Testnet (live) — the public Fusion Server endpoint
+- url: http://localhost:8080
+  description: Local development
+security:
+- bearerAuth: []
+- apiKeyAuth: []
+tags:
+- name: Withdrawals
+  description: L2-to-L1 withdrawal lifecycle (initiate, prove, finalize)
+paths:
+  /users/me/withdrawals:
+    get:
+      tags:
+      - Withdrawals
+      operationId: getUserWithdrawals
+      summary: List the authenticated user's withdrawals
+      parameters:
+      - name: page
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          default: 1
+      - name: pageSize
+        in: query
+        schema:
+          type: integer
+          minimum: 1
+          default: 10
+      responses:
+        '200':
+          description: Paginated withdrawal list.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  data:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WithdrawalRecord'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /withdrawals:
+    post:
+      tags:
+      - Withdrawals
+      operationId: createWithdrawal
+      summary: Initiate an L2-to-L1 withdrawal
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateWithdrawalRequest'
+      responses:
+        '201':
+          description: Withdrawal created.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WithdrawalRecord'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /withdrawals/action-required:
+    get:
+      tags:
+      - Withdrawals
+      operationId: getActionableWithdrawals
+      summary: List the caller's withdrawals awaiting a user action (prove / finalize)
+      responses:
+        '200':
+          description: Actionable withdrawals.
+          content:
+            application/json:
+              schema:
+                type: object
+                required:
+                - withdrawals
+                properties:
+                  withdrawals:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/WithdrawalRecord'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+  /withdrawals/{id}:
+    get:
+      tags:
+      - Withdrawals
+      operationId: getWithdrawalById
+      summary: Get a single withdrawal by id
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+      responses:
+        '200':
+          description: The withdrawal record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WithdrawalRecord'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /withdrawals/{id}/finalize-tx:
+    post:
+      tags:
+      - Withdrawals
+      operationId: recordFinalizeTx
+      summary: Record the L1 finalize transaction hash for a withdrawal
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordFinalizeTxRequest'
+      responses:
+        '200':
+          description: The updated withdrawal record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WithdrawalRecord'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /withdrawals/{id}/prove-tx:
+    post:
+      tags:
+      - Withdrawals
+      operationId: recordProveTx
+      summary: Record the L1 prove transaction hash for a withdrawal
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecordProveTxRequest'
+      responses:
+        '200':
+          description: The updated withdrawal record.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WithdrawalRecord'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+  /withdrawals/{id}/status:
+    get:
+      tags:
+      - Withdrawals
+      operationId: checkWithdrawalStatus
+      summary: Refresh and return a withdrawal's current status
+      parameters:
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: string
+          minLength: 1
+      responses:
+        '200':
+          description: The withdrawal record with refreshed status.
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WithdrawalRecord'
+        '401':
+          $ref: '#/components/responses/Unauthorized'
+        '404':
+          $ref: '#/components/responses/NotFound'
+components:
+  schemas:
+    WithdrawalNetwork:
+      type: string
+      description: Target L1 network for the withdrawal.
+      enum:
+      - sepolia
+      - amoy
+      - besu
+    WithdrawalTokenSymbol:
+      type: string
+      enum:
+      - QNT
+      - uUSD
+      - uGBP
+      - uEUR
+      - uToken
+    EvmAddress:
+      type: string
+      pattern: ^0x[a-fA-F0-9]{40}$
+      example: '0xAbCd1234AbCd1234AbCd1234AbCd1234AbCd1234'
+    RecordProveTxRequest:
+      type: object
+      required:
+      - proveTxHash
+      properties:
+        proveTxHash:
+          $ref: '#/components/schemas/TxHash'
+    CreateWithdrawalRequest:
+      type: object
+      required:
+      - toNetwork
+      - token
+      - amount
+      - fromAddress
+      - toAddress
+      properties:
+        toNetwork:
+          $ref: '#/components/schemas/WithdrawalNetwork'
+        token:
+          $ref: '#/components/schemas/WithdrawalTokenSymbol'
+        amount:
+          type: string
+          description: Numeric string (digits with optional decimal); must be greater than zero.
+          pattern: ^\d+(\.\d+)?$
+          example: '100.5'
+        fromAddress:
+          $ref: '#/components/schemas/EvmAddress'
+        toAddress:
+          $ref: '#/components/schemas/EvmAddress'
+        isNativeToErc20:
+          type: boolean
+          default: false
+        l2TxHash:
+          $ref: '#/components/schemas/TxHash'
+        l2BlockNumber:
+          type: integer
+          minimum: 0
+    StandardError:
+      type: object
+      required:
+      - timestamp
+      - status
+      - error
+      - message
+      - path
+      properties:
+        timestamp:
+          type: integer
+          description: Milliseconds since epoch
+        status:
+          type: integer
+        error:
+          type: string
+        message:
+          type: string
+        path:
+          type: string
+      example:
+        timestamp: 1709737845000
+        status: 400
+        error: Bad request
+        message: Validation failed
+        path: /users/me/deposits
+    WithdrawalRecord:
+      type: object
+      description: API projection of a withdrawal record.
+      required:
+      - id
+      - userId
+      - toNetwork
+      - token
+      - amount
+      - fromAddress
+      - toAddress
+      - isNativeToErc20
+      - status
+      - createdAt
+      - updatedAt
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        toNetwork:
+          $ref: '#/components/schemas/WithdrawalNetwork'
+        token:
+          $ref: '#/components/schemas/WithdrawalTokenSymbol'
+        amount:
+          type: string
+        fromAddress:
+          $ref: '#/components/schemas/EvmAddress'
+        toAddress:
+          $ref: '#/components/schemas/EvmAddress'
+        isNativeToErc20:
+          type: boolean
+        l2TxHash:
+          $ref: '#/components/schemas/TxHash'
+        l2BlockNumber:
+          type: integer
+        withdrawalHash:
+          type: string
+        withdrawalTx:
+          type: object
+          additionalProperties: true
+        disputeGameIndex:
+          type: integer
+        outputRootProof:
+          type: object
+          additionalProperties: true
+        withdrawalProof:
+          type: array
+          items:
+            type: string
+        proveTxHash:
+          $ref: '#/components/schemas/TxHash'
+        finalizeTxHash:
+          $ref: '#/components/schemas/TxHash'
+        status:
+          $ref: '#/components/schemas/WithdrawalStatus'
+        provableAt:
+          type: string
+          format: date-time
+        finalizableAt:
+          type: string
+          format: date-time
+        lastStatusCheckAt:
+          type: string
+          format: date-time
+        failureReason:
+          type: string
+        completedAt:
+          type: string
+          format: date-time
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+    RecordFinalizeTxRequest:
+      type: object
+      required:
+      - finalizeTxHash
+      properties:
+        finalizeTxHash:
+          $ref: '#/components/schemas/TxHash'
+    WithdrawalStatus:
+      type: string
+      description: Withdrawal lifecycle state (L2 rollup to L1).
+      enum:
+      - initiated
+      - l2_confirmed
+      - awaiting_dispute_game
+      - provable
+      - proven
+      - awaiting_finalization
+      - finalizable
+      - finalized
+      - proof_invalidated
+      - failed
+    TxHash:
+      type: string
+      pattern: ^0x[a-fA-F0-9]{64}$
+      example: '0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890ab'
+  responses:
+    BadRequest:
+      description: Bad request
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StandardError'
+    Unauthorized:
+      description: Unauthorized — missing or invalid credentials
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StandardError'
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/StandardError'
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: 'A Keycloak access token (JWT), verified against the realm JWKS
+
+        (signature / issuer / expiry). The caller''s identity is the token''s
+
+        `sub` claim — this is **not** a `clientId`.
+
+        '
+    apiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-API-Key
+      description: 'An Overledger-issued API key of the form `fk_<keyId>.<secret>`, minted via
+
+        `POST /users/me/api-keys`. Accepted on any route and **takes precedence**
+
+        over the `Authorization` header when both are supplied. Resolves to the
+
+        same identity (Keycloak `sub`) as the equivalent Bearer JWT.
+
+        '
+x-provenance:
+  method: searched
+  source: https://docs.overledger.dev/reference
+  harvested: '2026-10-14'
+  tool: harvest-readme-openapi.py
+  note: Assembled verbatim from the OpenAPI definition ReadMe embeds in each operation page of the provider's developer portal; paths and components merged by API title, nothing authored.
+  assembled_from:
+  - https://docs.overledger.dev/reference/checkdepositstatus.md
+  - https://docs.overledger.dev/reference/checkswapstatus.md
+  - https://docs.overledger.dev/reference/checkwithdrawalstatus.md
+  - https://docs.overledger.dev/reference/createdeposit.md
+  - https://docs.overledger.dev/reference/createsession.md
+  - https://docs.overledger.dev/reference/createsubscription.md
+  - https://docs.overledger.dev/reference/createswap.md
+  - https://docs.overledger.dev/reference/createwithdrawal.md
+  - https://docs.overledger.dev/reference/delete_deployed-contracts-contractaddress-permissions.md
+  - https://docs.overledger.dev/reference/delete_nodes-nodeid.md
+  - https://docs.overledger.dev/reference/deletesubscription.md
+  - https://docs.overledger.dev/reference/get_deployed-contracts-contractaddress-permissions.md
+  - https://docs.overledger.dev/reference/get_deployed-contracts-contractaddress.md
+  - https://docs.overledger.dev/reference/get_health.md
+  - https://docs.overledger.dev/reference/get_metrics.md
+  - https://docs.overledger.dev/reference/get_networks-fusion.md
+  - https://docs.overledger.dev/reference/get_networks-total.md
+  - https://docs.overledger.dev/reference/get_networks.md
+  - https://docs.overledger.dev/reference/get_ready.md
+  - https://docs.overledger.dev/reference/get_stakes-address.md
+  - https://docs.overledger.dev/reference/get_users-me-access-details.md
+  - https://docs.overledger.dev/reference/get_users-me-deployed-contracts.md
+  - https://docs.overledger.dev/reference/get_users-me-id.md
+  - https://docs.overledger.dev/reference/get_users-me-nodes.md
+  - https://docs.overledger.dev/reference/get_users-me-providers.md
+  - https://docs.overledger.dev/reference/get_users-me-stakes-total.md
+  - https://docs.overledger.dev/reference/get_users-me-stakes.md
+  - https://docs.overledger.dev/reference/get_users-me-transactions.md
+  - https://docs.overledger.dev/reference/getactionablewithdrawals.md
+  - https://docs.overledger.dev/reference/getallowedcomponents.md
+  - https://docs.overledger.dev/reference/getapp.md
+  - https://docs.overledger.dev/reference/getdeposit.md
+  - https://docs.overledger.dev/reference/getdepositallowance.md
+  - https://docs.overledger.dev/reference/getdepositbalances.md
+  - https://docs.overledger.dev/reference/getsession.md
+  - https://docs.overledger.dev/reference/getstep.md
+  - https://docs.overledger.dev/reference/getsupportedswaptokens.md
+  - https://docs.overledger.dev/reference/getswap.md
+  - https://docs.overledger.dev/reference/getswapquote.md
+  - https://docs.overledger.dev/reference/gettransactionstatus.md
+  - https://docs.overledger.dev/reference/getuserhistory.md
+  - https://docs.overledger.dev/reference/getuserswaps.md
+  - https://docs.overledger.dev/reference/getuserwithdrawals.md
+  - https://docs.overledger.dev/reference/getwithdrawalbyid.md
+  - https://docs.overledger.dev/reference/listaddressevents.md
+  - https://docs.overledger.dev/reference/listapikeys.md
+  - https://docs.overledger.dev/reference/listapps.md
+  - https://docs.overledger.dev/reference/listeventsubscriptionevents.md
+  - https://docs.overledger.dev/reference/listsessions.md
+  - https://docs.overledger.dev/reference/listsubscriptions.md
+  - https://docs.overledger.dev/reference/listuserdeposits.md
+  - https://docs.overledger.dev/reference/mintapikey.md
+  - https://docs.overledger.dev/reference/post_deployed-contracts-contractaddress-permissions.md
+  - https://docs.overledger.dev/reference/post_nodes.md
+  - https://docs.overledger.dev/reference/post_rpc-apikey.md
+  - https://docs.overledger.dev/reference/post_stakes.md
+  - https://docs.overledger.dev/reference/post_users-me-providers-providerid-reactivate.md
+  - https://docs.overledger.dev/reference/put_deployed-contracts-contractaddress.md
+  - https://docs.overledger.dev/reference/put_users-me-providers-providerid-reset-policy.md
+  - https://docs.overledger.dev/reference/queryappstate.md
+  - https://docs.overledger.dev/reference/recordfinalizetx.md
+  - https://docs.overledger.dev/reference/recordprovetx.md
+  - https://docs.overledger.dev/reference/replayevents.md
+  - https://docs.overledger.dev/reference/revokeapikey.md
+  - https://docs.overledger.dev/reference/submitstep.md
+  - https://docs.overledger.dev/reference/subscribeaddress.md
+  - https://docs.overledger.dev/reference/subscribeevent.md
+  - https://docs.overledger.dev/reference/tracktransaction.md
+  - https://docs.overledger.dev/reference/unsubscribeaddress.md
+  - https://docs.overledger.dev/reference/unsubscribeevent.md
+  merge:
+    pages: 70
+    deduped: 480
+    conflicts_kept_first: 0
